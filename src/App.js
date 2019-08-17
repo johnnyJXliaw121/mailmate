@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import firebase from "firebase"
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
+import SignIn from './Components/SignIn'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and HELLO to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+// firebase.initializeApp({
+//   apiKey: "AIzaSyCKY4jyeVG42EIKO_rUtt92HTvgGA6gTyg",
+//   authDomain: "quickstart-1565933663522.web.app"
+// })
+
+class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      isSignedIn: false
+    }
+    this.changeView = this.changeView.bind(this)
+  }
+  changeView() {
+    this.setState({
+      isSignedIn: true
+    })
+  }
+  render () {
+    return (
+        <div className="App">
+          {this.state.isSignedIn ? (
+                  <div>Signed In!</div>
+              )
+              :
+              (
+                  <SignIn changeView={this.changeView} />
+              )
+          }
+        </div>
+    )
+  }
 }
 
 export default App;
