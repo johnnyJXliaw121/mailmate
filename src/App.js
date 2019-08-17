@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import firebase from "firebase"
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import SignIn from './Components/SignIn'
+import SignIn2 from './Components/SignIn2'
 
 // firebase.initializeApp({
 //   apiKey: "AIzaSyCKY4jyeVG42EIKO_rUtt92HTvgGA6gTyg",
@@ -31,7 +32,7 @@ class App extends Component {
               )
               : // If not signed in - display Sign in view
               (
-                  <SignIn changeView={this.changeView} firebase={this.props.firebase}/>
+                  <SignIn2 />
               )
           }
         </div>
