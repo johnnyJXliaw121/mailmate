@@ -9,6 +9,7 @@ firebase.initializeApp({
   apiKey: "AIzaSyCKY4jyeVG42EIKO_rUtt92HTvgGA6gTyg",
   authDomain: "quickstart-1565933663522.web.app"
 })
+
 ReactDOM.render(<App firebase={firebase} />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
