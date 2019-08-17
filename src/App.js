@@ -14,11 +14,13 @@ class App extends Component {
     this.state = {
       isSignedIn: false
     }
-    this.changeView = this.changeView.bind(this)
-  }
-  changeView() {
-    this.setState({
-      isSignedIn: true
+    firebase.auth().onAuthStateChanged(user => {
+    if (user){
+            this.setState({isSignedIn:true, user: user})
+            }else{
+            this.setState({isSignedIn:false, user: null})
+            }
+            
     })
   }
   render () {
@@ -27,9 +29,9 @@ class App extends Component {
           {this.state.isSignedIn ? (
                   <div>Signed In!</div>
               )
-              :
+              : // If not signed in - display Sign in view
               (
-                  <SignIn changeView={this.changeView} />
+                  <SignIn changeView={this.changeView} firebase={this.props.firebase}/>
               )
           }
         </div>
