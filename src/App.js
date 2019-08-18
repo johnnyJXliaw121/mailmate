@@ -3,8 +3,10 @@ import firebase from "firebase"
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 // import SignIn from './Components/SignIn'
 import SignIn2 from './Components/SignIn2'
-import gapi , {callGAPI} from "./google_api"
+import { auth } from 'firebase/app'
+import {getListOfLabels} from "./gmail_api";
 
+let gapi = window.gapi
 
 class App extends Component {
   constructor(props) {
@@ -12,8 +14,7 @@ class App extends Component {
     this.state = {
       isSignedIn: null
     }
-    // Set google apps api listener
-    callGAPI(()=>{
+    // this.getListOfLabels = getListOfLabels().bind(this)
       let gapiInstance = gapi.auth2.getAuthInstance()
       gapiInstance.then(
         //On Init Function
@@ -25,21 +26,15 @@ class App extends Component {
       // Set listener for future GAPI authentication state changes
       gapiInstance.isSignedIn.listen((isSignedIn)=>{
         this.setState({isSignedIn: isSignedIn})
-        console.log("Signed in = ", isSignedIn)})      
-    },
-    // On Error
-    (error)=> console.log("There was a GAPI authenitcation error", error)
-    )
+        console.log("Signed in = ", isSignedIn)
 
-    //Set firebase Auth state Listener
-      // firebase.auth().onAuthStateChanged(user => {
-      // if (user){
-      //         this.setState({isSignedIn:true, user: user})
-      //         }else{
-      //         this.setState({isSignedIn:false, user: null})
-      //         }
-              
-      // })
+        getListOfLabels().then((response) => {
+          this.setState({
+            response
+          })
+        })
+
+      })
   }
   updateGapiState(isSignedIn){
       if(isSignedIn) {
