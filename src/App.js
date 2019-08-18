@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
-import firebase from "firebase"
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 // import SignIn from './Components/SignIn'
 import SignIn2 from './Components/SignIn2'
 import { auth } from 'firebase/app'
-import {getListOfLabels} from "./gmail_api";
+import {getListOfLabels} from "./api/Labels";
+import {getIdsFromUnreadList, getListOfUnreadMails} from "./api/Email";
+import {getDraftFromId, getListOfDraftMails, getSenderFromDraftResponse, getIdsFromDraftList} from "./api/Draft";
 
-let gapi = window.gapi
+
+var gapi = window.gapi
 
 class App extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class App extends Component {
     this.state = {
       isSignedIn: null
     }
+    // ================ Initializes Gapi Auth ====================
     // this.getListOfLabels = getListOfLabels().bind(this)
       let gapiInstance = gapi.auth2.getAuthInstance()
       gapiInstance.then(
@@ -28,20 +30,16 @@ class App extends Component {
         this.setState({isSignedIn: isSignedIn})
         console.log("Signed in = ", isSignedIn)
 
-        getListOfLabels().then((response) => {
-          this.setState({
-            response
-          })
+        // ==== GAPI API CALLS ======
+        getListOfUnreadMails().then((response) => {
+          console.log(getIdsFromUnreadList(response))
         })
 
       })
   }
-  updateGapiState(isSignedIn){
-      if(isSignedIn) {
-      console.log("Google Apps Successfully signed in! ==============")
-      }
-  }
+
   render () {
+
     let view = <div></div>
     if (this.state.isSignedIn == true){
       view = <div>Signed In!</div>
