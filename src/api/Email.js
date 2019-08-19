@@ -1,4 +1,6 @@
 import base64 from "base-64";
+import base64url from 'base64url'
+import btoa from 'btoa'
 
 let gapi = window.gapi
 
@@ -39,6 +41,16 @@ export let getMailFromId = (id) => {
     })
 }
 
+export let sendEmail = (emailBody) => {
+    // let encodedEmailBody = base64url(emailBody)
+    let encodedEmailBody = emailBody.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    return gapi.client.gmail.users.messages.send({
+        'userId': 'me',
+        'resource': {
+            'raw': encodedEmailBody
+        }
+    })
+}
 /**
  * Gets email body for an email id
  * @param response - output from getMailFromId

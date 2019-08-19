@@ -1,4 +1,5 @@
 import base64 from "base-64";
+import base64url from "base64url";
 
 let gapi = window.gapi
 
@@ -9,6 +10,23 @@ let gapi = window.gapi
 export let getListOfDraftMails = () => {
     return gapi.client.gmail.users.drafts.list({
         'userId': 'me'
+    })
+}
+
+/**
+ * Creates a draft email
+ * @param draftBody - in ascii plain text (normal english)
+ * @returns {*}
+ */
+export let createDraftMail = (draftBody) => {
+    let encodedDraftBody = base64url(draftBody) // encode draft body to base64url
+    return gapi.client.gmail.users.drafts.create({
+        'userId': 'me',
+        'resource': {
+            'message': {
+                'raw': encodedDraftBody
+            }
+        }
     })
 }
 
