@@ -18,13 +18,19 @@ export let getListOfDraftMails = () => {
  * @param draftBody - in ascii plain text (normal english)
  * @returns {*}
  */
-export let createDraftMail = (draftBody) => {
-    let encodedDraftBody = base64url(draftBody) // encode draft body to base64url
+export let createDraftMail = (from, to, subject, message) => {
+    // let encodedEmailBody = base64url(emailBody)
+    let email = "From: "
+    email += email + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n\r\n" + message
+    console.log(email)
+    email = base64url(email)
+
+    let encodedEmailBody = email.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     return gapi.client.gmail.users.drafts.create({
         'userId': 'me',
         'resource': {
             'message': {
-                'raw': encodedDraftBody
+                'raw': encodedEmailBody
             }
         }
     })
@@ -52,7 +58,7 @@ export let getDraftFromId = (id) => {
     return gapi.client.gmail.users.drafts.get({
         'userId': 'me',
         'id': id,
-        'format': 'full'
+        'format': 'raw'
     })
 }
 
@@ -86,3 +92,16 @@ export let getSenderFromDraftResponse = (response) => {
     return JSON.parse(response.body).message.payload.headers[5].value
     // return JSON.parse(response.body)
 }
+
+/**
+ * gets text info such as sender, subject, message id, body, from draft response
+ * @param response - raw output from getDraftFromId
+ * @returns {string} - string of info, regex needed
+ */
+// NOTES: works best with shorter drafts - regex still needed to separate subject, sending to, and body
+export let getTextFromDraftMailById = (response) => {
+    response = response.result.message.raw.replace(/-/g, '+').replace(/_/g, '/')
+    let decoded = base64url.decode(response)
+    return decoded
+}
+

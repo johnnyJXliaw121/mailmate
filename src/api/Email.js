@@ -41,9 +41,23 @@ export let getMailFromId = (id) => {
     })
 }
 
-export let sendEmail = (emailBody) => {
+/**
+ * Sends an email to to someone
+ * @param from
+ * @param to
+ * @param subject
+ * @param message
+ * @returns {*}
+ */
+// Example Function call: sendEmail("MailMate <mailmate.aus@gmail.com>", "Johnny Liaw <johnnyliaw121@gmail.com>", "Mamamia", "hello world!").then(() => {
+//           console.log("Mail Drafted!")
+//         })
+export let sendEmail = (from, to, subject, message) => {
     // let encodedEmailBody = base64url(emailBody)
-    let encodedEmailBody = emailBody.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+    let email = "From: "
+    email += email + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n\r\n" + message
+    email = base64url(email)
+    let encodedEmailBody = email.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     return gapi.client.gmail.users.messages.send({
         'userId': 'me',
         'resource': {

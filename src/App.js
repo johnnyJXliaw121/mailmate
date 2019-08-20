@@ -10,7 +10,7 @@ import {
   getListOfDraftMails,
   getSenderFromDraftResponse,
   getIdsFromDraftList,
-  createDraftMail
+  createDraftMail, getBodyFromDraftResponse, getSubjectFromDraftResponse, getTextFromDraftMailById
 } from "./api/Draft";
 
 let gapi = window.gapi
@@ -48,13 +48,11 @@ class App extends Component {
 
 
         // ==== GAPI API CALLS ======
+        let from = "MailMate <mailmate.aus@gmail.com>"
+        let to = "Johnny Liaw <johnnyliaw121@gmail.com>"
+        let subject = "Email yo!"
+        let message = "hello world world world!"
 
-        sendEmail((base64url(rawMessage))).then(() => {
-          console.log("Mail Drafted!")
-        })
-        // getListOfDraftMails().then((resp) => {
-        //   console.log(resp)
-        // })
 
       })
   }
