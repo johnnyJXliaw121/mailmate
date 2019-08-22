@@ -5,7 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import firebase from "firebase"
 
-let gapi = window.gapi
+var gapi = window.gapi
 
 var scopes = 'https://mail.google.com/'
 // var scopes = ['https://mail.google.com/',

@@ -21,7 +21,7 @@ export let getListOfDraftMails = () => {
 export let createDraftMail = (from, to, subject, message) => {
     // let encodedEmailBody = base64url(emailBody)
     let email = "From: "
-    email += email + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n\r\n" + message
+    email = email + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n\r\n" + message
     console.log(email)
     email = base64url(email)
 
@@ -62,7 +62,7 @@ export let getDraftFromId = (id) => {
     })
 }
 
-/**
+/** DEPRECATED FUNCTION!!!!
  * Gets the body content of a specific draft email
  * @param response - raw output from getDraftFromId
  * @returns {Array} - decoded body in string format
@@ -99,7 +99,7 @@ export let getSenderFromDraftResponse = (response) => {
  * @returns {string} - string of info, regex needed
  */
 // NOTES: works best with shorter drafts - regex still needed to separate subject, sending to, and body
-export let getTextFromDraftMailById = (response) => {
+export let getTextFromDraftMail = (response) => {
     response = response.result.message.raw.replace(/-/g, '+').replace(/_/g, '/')
     let decoded = base64url.decode(response)
     return decoded

@@ -4,6 +4,29 @@ import btoa from 'btoa'
 
 let gapi = window.gapi
 
+
+/**
+ * rturns a list of unread email body, sender, subject and id in an object
+ * @param unreads - raw output from getListOfUnreadMails
+ * @returns {Array}
+ */
+export let getUnreadMailInfo = (unreads) => {
+    let obj_list = []
+    let ids = getIdsFromUnreadList(unreads)
+    ids.map((id) => {
+        let obj = {}
+        obj["id"] = id
+        getMailFromId(id).then((response) => {
+            obj["snippet"] = getSnippetFromEmailResponse(response)
+            obj["body"] = getEmailBodyFromEmailResponse(response)
+            obj["subject"] = getSubjectFromEmailResponse(response)[0].value
+            obj["sender"] = getSenderFromEmailResponse(response)[0].value
+        })
+        obj_list.push(obj)
+    })
+    return obj_list
+}
+
 /**
  * Gets list of unread emails in the user's inbox
  * @returns {*}
@@ -83,7 +106,11 @@ export let getEmailBodyFromEmailResponse = (response) => {
  * @returns {*}
  */
 export let getSubjectFromEmailResponse = (response) => {
-    return JSON.parse(response.body).payload.headers[19]
+    let headers = response.result.payload.headers
+    let subject = headers.filter((obj) => {
+        return obj.name == "Subject"
+    })
+    return subject
 }
 
 /**
@@ -92,7 +119,11 @@ export let getSubjectFromEmailResponse = (response) => {
  * @returns {*}
  */
 export let getSenderFromEmailResponse = (response) => {
-    return JSON.parse(response.body).payload.headers[16]
+    let headers = response.result.payload.headers
+    let sender = headers.filter((obj) => {
+        return obj.name == "From"
+    })
+    return sender
 }
 
 /**

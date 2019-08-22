@@ -4,16 +4,26 @@ import SignIn2 from './Components/SignIn2'
 import base64url from 'base64url'
 import { auth } from 'firebase/app'
 import {getListOfLabels} from "./api/Labels";
-import {getIdsFromUnreadList, getListOfUnreadMails, sendEmail} from "./api/Email";
+import {
+  getIdsFromUnreadList,
+  getListOfUnreadMails,
+  sendEmail,
+  getMailFromId,
+  getEmailBodyFromEmailResponse,
+  getSubjectFromEmailResponse,
+  getSenderFromEmailResponse,
+  getSnippetFromEmailResponse,
+  getUnreadMailInfo
+} from "./api/Email";
 import {
   getDraftFromId,
   getListOfDraftMails,
   getSenderFromDraftResponse,
   getIdsFromDraftList,
-  createDraftMail, getBodyFromDraftResponse, getSubjectFromDraftResponse, getTextFromDraftMailById
+  createDraftMail, getBodyFromDraftResponse, getSubjectFromDraftResponse, getTextFromDraftMailById, getTextFromDraftMail
 } from "./api/Draft";
 
-let gapi = window.gapi
+var gapi = window.gapi
 
 const rawMessage = "From: mailmate.aus@gmail.com\r\n" + "To: johnnyliaw121@gmail.com\r\n>" + "Subject: My First Draft Email\r\n\r\n" + "The message text goes here"
 
@@ -39,22 +49,39 @@ class App extends Component {
       })
       })
 
-
-      console.log(gapi.auth2.AuthResponse)
       // Set listener for future GAPI authentication state changes
       gapiInstance.isSignedIn.listen((isSignedIn)=>{
         this.setState({isSignedIn: isSignedIn})
         console.log("Signed in = ", isSignedIn)
 
-
         // ==== GAPI API CALLS ======
         let from = "MailMate <mailmate.aus@gmail.com>"
         let to = "Johnny Liaw <johnnyliaw121@gmail.com>"
-        let subject = "Email yo!"
-        let message = "hello world world world!"
+        let subject = "Random Email"
+        let message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
 
+        // getListOfUnreadMails().then((unreads) => {
+        //   console.log(getUnreadMailInfo(unreads))
+        // })
+        // getListOfDraftMails().then((response) => {
+        //   let ids = getIdsFromDraftList(response)
+        //   console.log(ids)
+        //   ids.forEach((id) => {
+        //
+        //   getDraftFromId(id).then((draft) => {
+        //     console.log(draft)
+        //     console.log(getTextFromDraftMail(draft))
+        //   })
+        //   })
+        // })
+
+        // createDraftMail(from, to, subject, message).then(()=>{
+        //   console.log("success!")
+        // })
 
       })
+
+
   }
 
   render () {
