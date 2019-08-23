@@ -55,14 +55,14 @@ class App extends Component {
         console.log("Signed in = ", isSignedIn)
 
         // ==== GAPI API CALLS ======
-        let from = "MailMate <mailmate.aus@gmail.com>"
-        let to = "Johnny Liaw <johnnyliaw121@gmail.com>"
-        let subject = "Random Email"
-        let message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
+        var from = "MailMate <mailmate.aus@gmail.com>"
+        var to = "Johnny Liaw <johnnyliaw121@gmail.com>"
+        var subject = "Random Email"
+        var message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
 
-        // getListOfUnreadMails().then((unreads) => {
-        //   console.log(getUnreadMailInfo(unreads))
-        // })
+        getListOfUnreadMails().then((unreads) => {
+          this.setState({unreads: getUnreadMailInfo(unreads)})
+        })
         // getListOfDraftMails().then((response) => {
         //   let ids = getIdsFromDraftList(response)
         //   console.log(ids)
@@ -85,14 +85,14 @@ class App extends Component {
   }
 
   render () {
-
     let view = <div></div>
     if (this.state.isSignedIn == true){
+      // ======= INSERT HOME BELOW =========
       view = <div>Signed In!</div>
     }
     else if (this.state.isSignedIn === false && this.state.isSignedIn != null){
-                view = <div>Not Signed In<SignIn2 /></div>
-    }else {
+      view = <div>Not Signed In<SignIn2 /></div>
+    } else {
       view = <div> Pending Authentication Update </div>
     }
     return (
