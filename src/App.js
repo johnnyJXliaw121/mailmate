@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 // import SignIn from './Components/SignIn
 import SignIn2 from './Components/SignIn2';
+
 import {
   // sendEmail,
   getIdsFromUnreadList,
@@ -27,9 +28,10 @@ import {
   getLabelNamesFromLabelData,
   getAllMailIdWithlabel
 } from './api/Labels';
+import Navbar from "./Components/Navbar";
 
 var gapi = window.gapi
-
+var bg=require('./Background/background.jpg')
 // a little function to help us with reordering the result
 
 /**
@@ -153,7 +155,16 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} urgents={this.state.urgents} handleDelete={this.handleDelete} reorder={this.reorder} move={this.move}/>
+      view = <span style={{width: '100%'}}><Navbar/><Home
+                drafts={this.state.drafts}
+                unreads={this.state.unreads}
+                sales={this.state.sales}
+                urgents={this.state.urgents}
+                handleDelete={this.handleDelete}
+                reorder={this.reorder}
+                move={this.move}
+              /></span>
+
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
@@ -162,7 +173,8 @@ class App extends Component {
       </div>
     }
 
-    return (      view
+    return (
+        view
       );
 
   }

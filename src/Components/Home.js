@@ -4,6 +4,11 @@ import Card from './Card'
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import MiniCard from './MiniCard'
 import {assignLabelToMail, removeLabelFromMail} from "../api/Labels"
+import Navbar from './Navbar'
+import image from '../Background/background.jpg'
+import {withStyles} from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 
 var gapi = window.gapi
 
@@ -24,7 +29,7 @@ var gapi = window.gapi
 //   return result;
 // };
 
-const grid = 8;
+const grid = 12;
 
 const getListStyle = isDraggingOver => ({
   marginBottom:'2%',
@@ -32,9 +37,9 @@ const getListStyle = isDraggingOver => ({
   marginRight:'1%',
   background: isDraggingOver
     ? 'lightblue'
-    : 'lightgrey',
+    : '#F0F0F0',
   padding: grid,
-  width: 250
+  width: 300
 });
 
 class Home extends Component {
@@ -128,85 +133,76 @@ class Home extends Component {
   // But in this example everything is just done in one place for simplicity
   render() {
     return (
-      
-    <DragDropContext onDragEnd={this.onDragEnd}>
-      <div style={{fontSize:'56px',fontWeight:'bold',fontFamily: 'Montserrat, sans-serif',marginTop:'20%',marginLeft:'3%',marginRight:'10%'}}>
-        <div style={{position: 'fixed',
-  width: '150px',color:'rgb(235,45,79)'
- }}>
-        Mail   &nbsp;Mate
-        </div>
-        </div>
-      {/* Drafts */}
-      <Droppable droppableId="drafts" style={{marginTop:'3%',marginBottom:'3%'}}>
-        
-        {
-          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-          <div style={{display:'flex',marginLeft: '30%',marginRight: '30%',color:'rgb(42,20,12)'}}>
-            <h2 style={{marginRight:'1%'}}>Drafts</h2>
-            <img style={{marginTop:'10%',color:'rgb(42,20,12)'}} src="https://image.flaticon.com/icons/png/512/46/46064.png" alt="Smiley face" height="42" width="42"></img>
-            </div>
+        <Grid container direction="row"
+              justify="center"
+              alignItems="flex-start" className={this.props.classes.root} spacing={2}>
+    <DragDropContext onDragEnd={this.onDragEnd} style={{width: '100%'}}>
+        {/* Unreads */}
+
+        <Droppable droppableId="unreads" style={{paddingLeft: '50px'}}>
+          {/*<Grid item xs={12}>*/}
             {
-              this.props.drafts.map((output, index) => {
-                let name = output.To.substring(0, output.To.indexOf("<"));
-                console.log(output.Date);
-                var mydate = new Date(output.Date);
-               
-                var now = new Date();
-             
-                var diff = Math.abs(now - mydate);
+                (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+                    <div style={{display:'flex',marginLeft: '35%',marginRight: '30%'}} >
+                        <h2 style={{marginRight:'1%'}}>Unreads</h2>
+                    </div>
+                    {
+                        this.props.unreads.map((output, index) => {
+                            let name = output.From.substring(0, output.From.indexOf("<"));
+                            console.log(output)
 
-                
-                var finalTime = this.timeConversation(diff)
-                
-                return (
-                  
-                <MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="drafts"/>
-                
-                )
+                            var mydate = new Date(output.Date);
 
-              })
+                            var now = new Date();
+
+                            var diff = Math.abs(now - mydate);
+
+
+                            var finalTime = this.timeConversation(diff)
+                            return (<MiniCard id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/> )
+
+                        })
+                    }
+                    {provided.placeholder}
+                </div>)
             }
-            {provided.placeholder}
-          </div>)
-        }
-      </Droppable>
-      {/* Unreads */}
-      <Droppable droppableId="unreads">
+          {/*</Grid>*/}
+        </Droppable>
+      <Droppable droppableId="urgents">
+        {/*<Grid item xs={12}>*/}
         {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-            <div style={{display:'flex',marginLeft: '25%',marginRight: '30%'}} >
-            <h2 style={{marginRight:'1%'}}>Unreads</h2>
-            <img style={{marginTop:'5%',fill:'#EF8200',stroke:'#EF8200'}} src="https://cdn.iconscout.com/icon/premium/png-256-thumb/mark-as-unread-1487398-1258556.png" alt="Smiley face" height="42" width="42"></img>
+            <div style={{display:'flex',marginLeft: '35%',marginRight: '30%'}} >
+              <h2 style={{marginRight:'1%'}}>Urgent</h2>
             </div>
             {
-              this.props.unreads.map((output, index) => {
+              this.props.urgents.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                console.log(output)
 
                 var mydate = new Date(output.Date);
-               
+
                 var now = new Date();
-             
+
                 var diff = Math.abs(now - mydate);
 
-                
+
                 var finalTime = this.timeConversation(diff)
-                return (<MiniCard id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/> )
+                return (<MiniCard id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
 
               })
             }
             {provided.placeholder}
           </div>)
         }
+        {/*</Grid>*/}
       </Droppable>
       {/* Sales */}
       <Droppable droppableId="sales" >
+        {/*<Grid item xs={12}>*/}
         {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)} >
-            <div style={{display:'flex',marginLeft: '30%',marginRight: '30%'}}>
-            <h2 style={{marginRight:'1%',color:'rgb(42,20,12'}}>Sales</h2>
-            <img style={{marginTop:'10%',fill:'#EF8200',stroke:'#EF8200'}} src="https://svgur.com/i/EfU.svg" alt="Smiley face" height="42" width="42"></img>
+            <div style={{display:'flex',marginLeft: '28%', textAlign: 'center'}}>
+            <h2 style={{marginRight:'1%',color:'rgb(42,20,12'}}>Client To Do's</h2>
             </div>
             {
               this.props.sales.map((output, index) => {
@@ -221,31 +217,59 @@ class Home extends Component {
                 
                 var finalTime = this.timeConversation(diff)
 
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
+                return (<MiniCard id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
               })
             }
             {provided.placeholder}
           </div>)
         }
+        {/*</Grid>*/}
       </Droppable>
-      <Droppable droppableId="urgents">
+      {/* Drafts */}
+      <Droppable droppableId="drafts" style={{marginTop:'3%',marginBottom:'3%'}}>
+        {/*<Grid item xs={12}>*/}
         {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+            <div style={{display:'flex',marginLeft: '38%',marginRight: '30%',color:'rgb(42,20,12)'}}>
+              <h2 style={{marginRight:'1%'}}>Drafts</h2>
+            </div>
             {
-              this.props.urgents.map((output, index) => {
-                let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
+              this.props.drafts.map((output, index) => {
+                let name = output.To.substring(0, output.To.indexOf("<"));
+                console.log(output.Date);
+                var mydate = new Date(output.Date);
+
+                var now = new Date();
+
+                var diff = Math.abs(now - mydate);
+
+
+                var finalTime = this.timeConversation(diff)
+
+                return (
+
+                    <MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="drafts"/>
+
+                )
 
               })
             }
             {provided.placeholder}
           </div>)
         }
+        {/*</Grid>*/}
       </Droppable>
+
     </DragDropContext>
+  </Grid>
     );
   }
 }
 
+const styler = {
+  backgroundContainer: {
+    backgroundImage: `url(${ image })`
+  },
+}
 // Put the things into the DOM!
-export default Home
+export default withStyles(styler)(Home)
