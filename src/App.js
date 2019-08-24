@@ -3,7 +3,17 @@ import React, { Component } from 'react';
 import SignIn2 from './Components/SignIn2'
 import base64url from 'base64url'
 import { auth } from 'firebase/app'
-import {getListOfLabels} from "./api/Labels";
+import {
+  assignLabelToMail, createNewLabel,
+  getAllMailIdWithlabel,
+  getAllMailWithlabel,
+  getAllMailWithLabel,
+  getListOfLabelData,
+  getListOfLabelMetadata,
+  getListOfLabelNames,
+  getListOfLabels,
+  getListOfLabelsRaw, removeLabelFromMail
+} from "./api/Labels";
 import {
   getIdsFromUnreadList,
   getListOfUnreadMails,
@@ -44,9 +54,9 @@ class App extends Component {
       this.setState({isSignedIn:gapiInstance.isSignedIn.get()})
       console.log("Initial GAPI State",this.state.isSignedIn)
       let currentUser = gapiInstance.currentUser.get()
-      currentUser.reloadAuthResponse().then((resp) => {
-        console.log(resp)
-      })
+      // currentUser.reloadAuthResponse().then((resp) => {
+      //   console.log(resp)
+      // })
       })
 
       // Set listener for future GAPI authentication state changes
@@ -60,24 +70,41 @@ class App extends Component {
         var subject = "Random Email"
         var message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
 
-        getListOfUnreadMails().then((unreads) => {
-          this.setState({unreads: getUnreadMailInfo(unreads)})
-        })
-        // getListOfDraftMails().then((response) => {
-        //   let ids = getIdsFromDraftList(response)
-        //   console.log(ids)
-        //   ids.forEach((id) => {
-        //
-        //   getDraftFromId(id).then((draft) => {
-        //     console.log(draft)
-        //     console.log(getTextFromDraftMail(draft))
-        //   })
-        //   })
-        // })
+        if (isSignedIn) {
+          getListOfUnreadMails().then((unreads) => {
+            this.setState({unreads: getUnreadMailInfo(unreads)})
+          })
+          // getListOfDraftMails().then((response) => {
+          //   let ids = getIdsFromDraftList(response)
+          //   console.log(ids)
+          //   ids.forEach((id) => {
+          //
+          //   getDraftFromId(id).then((draft) => {
+          //     console.log(draft)
+          //     console.log(getTextFromDraftMail(draft))
+          //   })
+          //   })
+          // })
 
-        // createDraftMail(from, to, subject, message).then(()=>{
-        //   console.log("success!")
-        // })
+          // createDraftMail(from, to, subject, message).then(()=>{
+          //   console.log("success!")
+          // })
+
+          console.log("==== LABEL DATA =====")
+          this.setState({label: getListOfLabelData()})
+          //
+          console.log("==== Retrieving Mail With Label ====")
+          console.log(getAllMailIdWithlabel("Label_6111354806179621733"))
+
+          // console.log("=== assigning label to mail ===")
+          // assignLabelToMail(["Label_6111354806179621733"],"16ca369a11d9abe0").then((response) => {
+          //   console.log("mail assignment success!")
+          // })
+
+          createNewLabel("QUEUE").then((response) => {
+            console.log("QUEUE label created")
+          })
+        }
 
       })
 
