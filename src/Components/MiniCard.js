@@ -10,6 +10,8 @@ import CardActions from '@material-ui/core/CardActions';
 import CardMedia from '@material-ui/core/CardMedia';
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import Box from "@material-ui/core/Box";
+import { shadows } from '@material-ui/system';
+
 
 
 
@@ -49,7 +51,7 @@ class MiniCard extends Component {
                             snapshot.isDragging,
                             provided.draggableProps.style
                         )}>
-                        <Card style={{borderRadius: '15px'}}>
+                        <Card style={{boxShadow: '1px 2px 7px 0px rgba(0,0,0,0.75)'}}>
                             <CardContent>
                                 <Typography style={{marginTop: '-5px'}}>
                                     <span style={{color: 'black',
@@ -64,7 +66,7 @@ class MiniCard extends Component {
                                 <Typography style={{marginBottom: '-10px'}}>
                                     <Box style={{fontFamily: 'Roboto, sans-serif',
                                                     fontSize: '15px',
-                                                    color: '#b0b0b0',
+                                                    color: '#bcbcbc',
                                                     fontWeight: '200',
                                                     paddingTop: '8px',
                                                     borderTop: '1px dotted #ccc'}}>{snippet}</Box>
