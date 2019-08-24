@@ -123,13 +123,14 @@ class MiniCard extends Component {
     const letter = sender ? sender.charAt(0) : 'X'
     const body = this.props.body
     const emailNameToSend = this.props.emailName
+    const color = '8px solid ' + this.props.color
     return (<div>
       <Draggable key={id} draggableId={id} index={index}>
         {
           (provided, snapshot) => (
           <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
           <Card style={{backgroundColor: '#white',
-                          borderLeft: '5px solid #74B5FF'}}>
+                          borderLeft: color}}>
                           <CardHeader
                               avatar={
                                   <Avatar aria-label="recipe">
@@ -142,23 +143,27 @@ class MiniCard extends Component {
                                   </IconButton>
                               }
                               title={sender}
-
+                              subheader={this.props.finalTime}
+                              style={{paddingBottom: '-20px'}}
                           />
-              <CardContent >
+              <CardContent style={{paddingTop: '-20px'}}>
                 <Typography >
-                <Box style={{
-                    fontFamily: 'Montserrat, sans-serif',
-                    paddingBottom: '5px'}}>{subject}</Box>
+                  <div >
+                    <Box style={{
+                        fontFamily: 'Montserrat, sans-serif',
+                        paddingBottom: '1px'}}>
+                      {subject}
+                    </Box>
+                  </div>
                 </Typography>
-                <Typography style={{marginBottom: '-10px'}}>
+                <Typography style={{marginBottom: '-5px'}}>
                 <Box style={{fontFamily: 'Montserrat',
                     fontSize: '12px',
                     color: 'black',
 
                     fontWeight: '50',
                     paddingTop: '8px',
-                    opacity: '0.5',
-                    borderTop: '1px solid #ccc'}} onClick={() => this.onOpenModal(subject,body)}>{snippet}</Box>
+                    opacity: '0.5'}} onClick={() => this.onOpenModal(subject,body)}>{snippet}</Box>
                 </Typography>
 
               </CardContent>
