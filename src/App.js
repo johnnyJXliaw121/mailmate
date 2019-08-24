@@ -6,28 +6,27 @@ import SignIn2 from './Components/SignIn2'
 // import {getListOfLabels} from "./api/Labels";
 import {
   // getIdsFromUnreadList,
-  getListOfUnreadMails,
+  // getListOfUnreadMails,
   // sendEmail,
   // getMailFromId,
   // getEmailBodyFromEmailResponse,
   // getSubjectFromEmailResponse,
   // getSenderFromEmailResponse,
   // getSnippetFromEmailResponse,
-  getUnreadMailInfo
+  // getUnreadMailInfo
 } from "./api/Email";
 import {
-  // getDraftFromId,
-  // getListOfDraftMails,
-  // getSenderFromDraftResponse,
-  // getIdsFromDraftList,
+  // getDraftRawFromId,
+  getListOfDraftMails,
+  getIdsFromDraftList,
   // createDraftMail,
   // getBodyFromDraftResponse,
-  // getSubjectFromDraftResponse,
-  // getTextFromDraftMailById,
-  // getTextFromDraftMail
-} from "./api/Draft";
+  // getHeadersFromDraftResponse,
+  // getDraftFromDraftResponse,
+  getDraftById
+} from "./api/Draft"
 
-import ReactDOM from 'react-dom';
+// import ReactDOM from 'react-dom';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 var gapi = window.gapi
@@ -122,7 +121,22 @@ class App extends Component {
     gapiInstance.isSignedIn.listen((isSignedIn) => {
       this.setState({isSignedIn: isSignedIn})
       console.log("Signed in = ", isSignedIn)
+
+      // ==== GAPI API CALLS ======
+      var from = "MailMate <mailmate.aus@gmail.com>"
+      var to = "Johnny Liaw <johnnyliaw121@gmail.com>"
+      var subject = "Random Email"
+      var message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
+
+      getListOfDraftMails().then((response) => {
+        let ids = getIdsFromDraftList(response)
+        console.log(ids)
+        ids.forEach((id) => {
+          getDraftById(id).then((output) => console.log(output))
+        })
+      })
     })
+
   }
 
   /**
