@@ -69,7 +69,7 @@ export const getDraftRawFromId = (id) => {
 const getJsonFromDraftResponse = (response) => {
     const json = JSON.parse(response.body)
     return {
-        payload: json.message.payload, 
+        payload: json.message.payload,
         id: json.id,
         date: json.message.internalDate
     }
@@ -82,8 +82,8 @@ const getJsonFromDraftResponse = (response) => {
  */
 export const getBodyFromDraftResponse = (response) => {
     let encodedMsg = getJsonFromDraftResponse(response).payload.body.data
-    const filteredMsg = encodedMsg.replace(/-/g, '+').// replace '_' with '/'
-        replace(/_/g, '/'); // and replace '-' with '+'
+    const filteredMsg = encodedMsg.replace(/-/g, '+')// replace '_' with '/'
+        .replace(/_/g, '/'); // and replace '-' with '+'
     return base64.decode(filteredMsg)
 }
 
@@ -108,7 +108,7 @@ export const getHeadersFromDraftResponse = (response) =>{
  */
 export const getDraftFromDraftResponse = (response) => {
     const draftObject = {
-        ... getHeadersFromDraftResponse(response),
+        ...getHeadersFromDraftResponse(response),
         body: getBodyFromDraftResponse(response),
         id:  getJsonFromDraftResponse(response)['id'],
         dateUTC: getJsonFromDraftResponse(response)['date']
