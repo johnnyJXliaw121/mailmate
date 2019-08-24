@@ -12,19 +12,10 @@ const getItems = (count, offset = 0) => Array.from({
   content: `item ${k + offset}`
 }));
 
-// a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 /**
  * Moves an item from one list to another list.
  */
-const move = (source, destination, droppableSource, droppableDestination) => {
+function move(source, destination, droppableSource, droppableDestination) {
   const sourceClone = Array.from(source);
   const destClone = Array.from(destination);
   const [removed] = sourceClone.splice(droppableSource.index, 1);
@@ -49,27 +40,34 @@ const getListStyle = isDraggingOver => ({
 });
 
 class Home extends Component {
-  state = {
-    items: getItems(10),
-    selected: getItems(5, 10),
-    open: false,
-    title: '',
-    textBox: '<p>Hello World</p>'
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      items: getItems(10),
+      selected: getItems(5, 10),
+      open: false,
+      title: '',
+      textBox: '<p>Hello World</p>'
+    };
+    this.onDragEnd = this.onDragEnd.bind(this)
+  }
 
   /**
      * A semi-generic way to handle multiple lists. Matches
      * the IDs of the droppable container to the names of the
      * source arrays stored in the state.
      */
-  id2List = {
-    droppable: 'items',
-    droppable2: 'selected'
-  };
+  getList(id) {
+    let id2List = {
+      drafts: 'drafts',
+      unreads: 'unreads',
+      sales: 'sales'
+    };
 
-  getList = id => this.state[this.id2List[id]];
+    return this.props[id2List[id]];
+  }
 
-  onDragEnd = result => {
+  onDragEnd(result) {
     const {source, destination} = result;
 
     // dropped outside the list
@@ -78,7 +76,7 @@ class Home extends Component {
     }
 
     if (source.droppableId === destination.droppableId) {
-      const items = reorder(this.getList(source.droppableId), source.index, destination.index);
+      const items = this.props.reorder(source.droppableId, source.index, destination.index);
 
       let state = {
         items
@@ -94,13 +92,9 @@ class Home extends Component {
     } else {
       const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
 
-      this.setState({items: result.droppable, selected: result.droppable2});
+      this.setState({drafts: result.drafts, unreads: result.unreads, sales: result.sales});
     }
   };
-
-  handleClick() {
-    console.log("YEE MOTHERUCKER")
-  }
 
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity

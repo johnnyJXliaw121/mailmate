@@ -31,13 +31,6 @@ import {
 var gapi = window.gapi
 
 // a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
 
 /**
  * Moves an item from one list to another list.
@@ -66,7 +59,17 @@ class App extends Component {
       unreads: []
 
     };
+    this.reorder = this.reorder.bind(this)
   }
+
+  reorder(id, startIndex, endIndex) {
+    let list = this.state[id]
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    this.setState({[id]: result})
+  };
+
   componentWillMount() {
     let gapiInstance = gapi.auth2.getAuthInstance()
     gapiInstance.then(
@@ -127,40 +130,40 @@ class App extends Component {
     })
   }
 
-  onDragEnd = result => {
-    const {source, destination} = result;
-
-    // dropped outside the list
-    if (!destination) {
-      return;
-    }
-
-    if (source.droppableId === destination.droppableId) {
-      const items = reorder(this.getList(source.droppableId), source.index, destination.index);
-
-      let state = {
-        items
-      };
-
-      if (source.droppableId === 'droppable2') {
-        state = {
-          selected: items
-        };
-      }
-
-      this.setState(state);
-    } else {
-      const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
-
-      this.setState({items: result.droppable, selected: result.droppable2});
-    }
-  };
+  // onDragEnd = result => {
+  //   const {source, destination} = result;
+  //
+  //    dropped outside the list
+  //   if (!destination) {
+  //     return;
+  //   }
+  //
+  //   if (source.droppableId === destination.droppableId) {
+  //     const items = this.reorder(this.getList(source.droppableId), source.index, destination.index);
+  //
+  //     let state = {
+  //       items
+  //     };
+  //
+  //     if (source.droppableId === 'droppable2') {
+  //       state = {
+  //         selected: items
+  //       };
+  //     }
+  //
+  //     this.setState(state);
+  //   } else {
+  //     const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
+  //
+  //     this.setState({items: result.droppable, selected: result.droppable2});
+  //   }
+  // };
 
   render() {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales}/>
+      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} reorder={this.reorder}/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
