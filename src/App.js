@@ -23,7 +23,7 @@ import {
   createDraftMail, getBodyFromDraftResponse, getSubjectFromDraftResponse, getTextFromDraftMailById, getTextFromDraftMail
 } from "./api/Draft";
 
-import Board from 'react-trello'
+//import Board from 'react-trello'
 
 
 var gapi = window.gapi
@@ -244,9 +244,9 @@ class App extends Component {
     if (this.state.isSignedIn == true){
       // ======= INSERT HOME BELOW =========
       // the view below is the layout for 1 row 3 column for design
-      view = <Board   style={{background: "linear-gradient(90deg, #77c9d4, #57bc90)"}}  // Style of BoardWrapper
-      data={data} draggable />
-
+      // view = <Board   style={{background: "linear-gradient(90deg, #77c9d4, #57bc90)"}}  // Style of BoardWrapper
+      // data={data} draggable />
+       view =  <div>Signed In<SignIn2 /></div>
       
     }
     else if (this.state.isSignedIn === false && this.state.isSignedIn != null){
