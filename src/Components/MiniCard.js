@@ -12,6 +12,10 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import Box from "@material-ui/core/Box";
 import { shadows } from '@material-ui/system';
 import { withStyles } from '@material-ui/core/styles';
+import {CardHeader} from "@material-ui/core";
+import DeleteIcon from '@material-ui/icons/Delete';
+import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
 
 
 
@@ -50,7 +54,12 @@ class MiniCard extends Component {
         const sender = this.props.sender
         const subject = this.props.subject
         const snippet = this.props.snippet
+        console.log("sender", sender)
+        // const letter = this.props.sender.substring(0, 1);
         // console.log(item)
+
+
+        const letter = sender ? sender.charAt(0) : 'X'
         return (
             <Draggable
                 key={item.id}
@@ -58,7 +67,6 @@ class MiniCard extends Component {
                 index={index}>
                 {(provided, snapshot) => (
                     <div
-                        onClick={this.handleClick}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
@@ -68,26 +76,36 @@ class MiniCard extends Component {
                         )}>
                         <Card style={{backgroundColor: '#white',
                                         borderLeft: '5px solid #74B5FF'}}>
-                            <CardContent>
-                                <Typography style={{marginTop: '-5px'}}>
-                                    <span style={{color: '#74b5ff',
-                                                    fontFamily: 'Montserrat, sans-serif',
-                                                    fontSize: '20px',
-                                                    fontWeight: '600'}}>{sender}</span>
-                                </Typography>
+                            <CardHeader
+                                avatar={
+                                    <Avatar aria-label="recipe">
+                                        {letter}
+                                    </Avatar>
+                                }
+                                action={
+                                    <IconButton aria-label="settings">
+                                        <DeleteIcon/>
+                                    </IconButton>
+                                }
+                                title={sender}
+                                subheader="September 14, 2016"
+                            />
+                            <CardContent onClick={this.handleClick}>
                                 <Typography >
                                     <Box style={{
+                                        marginTop: '-10px',
                                         fontFamily: 'Montserrat, sans-serif',
-                                        paddingBottom: '5px'}}>{subject}</Box>
+                                        paddingBottom: '5px'}}>
+                                        {subject}
+                                    </Box>
                                 </Typography>
                                     <Typography style={{marginBottom: '-10px'}}>
                                         <Box style={{fontFamily: 'Montserrat',
-                                            fontSize: '12px',
+                                            fontSize: '14px',
                                             color: 'black',
                                             fontWeight: '50',
                                             paddingTop: '8px',
-                                            opacity: '0.5',
-                                            borderTop: '1px solid #ccc'}}>{snippet}</Box>
+                                            opacity: '0.5'}}>{snippet}</Box>
                                 </Typography>
                             </CardContent>
                         </Card>

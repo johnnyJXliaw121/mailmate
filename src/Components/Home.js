@@ -4,6 +4,8 @@ import Card from './Card'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import MiniCard from './MiniCard'
 
+// const mailData = [{}]
+
 // fake data generator
 const getItems = (count, offset = 0) =>
     Array.from({ length: count }, (v, k) => k).map(k => ({

@@ -76,9 +76,9 @@ class App extends Component {
             this.setState({unreads: getUnreadMailInfo(unreads)})
           })
 
-          sendEmail(from, to, subject, message).then((resp) => {
-            console.log("email sent")
-          })
+          // sendEmail(from, to, subject, message).then((resp) => {
+          //   console.log("email sent")
+          // })
 
           // getListOfDraftMails().then((response) => {
           //   let ids = getIdsFromDraftList(response)
