@@ -109,7 +109,6 @@ class Home extends Component {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
             {
               this.props.drafts.map((output, index) => {
-                console.log('output', output);
                 let name = output.To.substring(0, output.To.indexOf("<"));
                 return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
               })
@@ -124,7 +123,6 @@ class Home extends Component {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
             {
               this.props.unreads.map((output, index) => {
-                console.log('output', output);
                 let name = output.From.substring(0, output.From.indexOf("<"));
                 return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
               })
@@ -133,18 +131,20 @@ class Home extends Component {
           </div>)
         }
       </Droppable>
-      {/* <Droppable droppableId="droppable2">
-                    {(provided, snapshot) => (
-                        <div
-                            ref={provided.innerRef}
-                            style={getListStyle(snapshot.isDraggingOver)}>
-                            {this.state.selected.map((item, index) => (
-                                <MiniCard item={item} index={index}/>
-                            ))}
-                        </div>
-                    )}
-                </Droppable> */
-      }
+      {/* Sales */}
+      <Droppable droppableId="sales">
+        {
+          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+            {
+              this.props.sales.map((output, index) => {
+                let name = output.From.substring(0, output.From.indexOf("<"));
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
+              })
+            }
+            {provided.placeholder}
+          </div>)
+        }
+      </Droppable>
     </DragDropContext>);
   }
 }

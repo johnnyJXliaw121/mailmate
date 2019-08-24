@@ -3,26 +3,24 @@ import React, {Component} from 'react';
 import SignIn2 from './Components/SignIn2'
 import base64url from 'base64url'
 import {auth} from 'firebase/app'
+// import {
+//   assignLabelToMail,
+//   createNewLabel,
+//   getAllMailIdWithlabel,
+//   getAllMailWithlabel,
+//   getAllMailWithLabel,
+//   getListOfLabelData,
+//   getListOfLabelMetadata,
+//   getListOfLabelNames,
+//   getListOfLabels,
+//   getListOfLabelsRaw,
+//   removeLabelFromMail
+// } from "./api/Labels";
 import {
-  assignLabelToMail,
-  createNewLabel,
-  getAllMailIdWithlabel,
-  getAllMailWithlabel,
-  getAllMailWithLabel,
-  getListOfLabelData,
-  getListOfLabelMetadata,
-  getListOfLabelNames,
-  getListOfLabels,
-  getListOfLabelsRaw,
-  removeLabelFromMail
-} from "./api/Labels";
-import {
-  getIdsFromUnreadList,
-  getListOfUnreadMails,
-  getEmailById,
-  getEmailRawFromId,
-  getBodyFromEmailResponse,
-  getHeadersFromEmailResponse
+  getIdsFromUnreadList, getListOfUnreadMails, getEmailById,
+  // getEmailRawFromId,
+  // getBodyFromEmailResponse,
+  // getHeadersFromEmailResponse
 } from "./api/Email";
 import {
   // getDraftRawFromId,
@@ -35,7 +33,7 @@ import {
   getDraftById
 } from "./api/Draft"
 // import ReactDOM from 'react-dom';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+// import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import Home from "./Components/Home";
 import {getListOfLabelData, getAllMailWithLabel, getLabelNamesFromLabelData, getAllMailIdWithlabel} from './api/Labels';
 
@@ -108,6 +106,7 @@ class App extends Component {
       selected: getItems(5, 10),
       isSignedIn: null,
       drafts: [],
+      sales: [],
       unreads: []
     };
     // ================ Initializes Gapi Auth ====================
@@ -142,7 +141,6 @@ class App extends Component {
 
         ids.forEach(id => {
           getEmailById(id).then((output) => {
-            console.log('output', output);
             unreads.push(output)
             this.setState({unreads: unreads})
           })
@@ -168,9 +166,19 @@ class App extends Component {
 
       })
 
-      getAllMailIdWithlabel('INBOX').then(out => {
-        console.log('getall mail with id', out)
+      let sales = [];
+      getAllMailIdWithlabel('Label_6111354806179621733').then((response) => {
+        let ids = response
+        ids.forEach((id) => {
+          getEmailById(id).then((output) => {
+            sales.push(output)
+            this.setState({sales: sales})
+          })
+        })
       })
+      // getAllMailIdWithlabel('Label_6111354806179621733').then(out => {
+      //   console.log('getall mail with id', out)
+      // })
     })
   }
 
@@ -283,7 +291,7 @@ class App extends Component {
       //
       // } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       //   view = <div>Not Signed In<SignIn2/></div>
-      view = <Home drafts={this.state.drafts} unreads={this.state.unreads}/>
+      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales}/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
