@@ -56,7 +56,8 @@ class App extends Component {
       isSignedIn: null,
       drafts: [],
       sales: [],
-      unreads: []
+      unreads: [],
+      urgents: []
     };
     this.handleDelete = this.handleDelete.bind(this)
     this.reorder = this.reorder.bind(this)
@@ -127,6 +128,17 @@ class App extends Component {
             })
           })
         })
+
+        let urgents = [];
+        getAllMailIdWithlabel("Label_5377739233345144947").then((response) => {
+          let ids = response
+          ids.forEach((id) => {
+            getEmailById(id).then((output) => {
+              urgents.push(output)
+              this.setState({urgents: urgents})
+            })
+          })
+        })
       }
     })
   }
@@ -142,7 +154,7 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} handleDelete={this.handleDelete} reorder={this.reorder}/>
+      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} urgents={this.state.urgents} handleDelete={this.handleDelete} reorder={this.reorder}/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
