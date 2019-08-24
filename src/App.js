@@ -7,13 +7,11 @@ import {getListOfLabels} from "./api/Labels";
 import {
   getIdsFromUnreadList,
   getListOfUnreadMails,
-  sendEmail,
-  getMailFromId,
-  getEmailBodyFromEmailResponse,
-  getSubjectFromEmailResponse,
-  getSenderFromEmailResponse,
-  getSnippetFromEmailResponse,
-  getUnreadMailInfo
+  getEmailById,
+  getEmailRawFromId,
+  getBodyFromEmailResponse,
+  getHeadersFromEmailResponse,
+
 } from "./api/Email";
 import {
   getDraftRawFromId,
@@ -66,7 +64,13 @@ class App extends Component {
         var message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
 
         getListOfUnreadMails().then((unreads) => {
-          this.setState({unreads: getUnreadMailInfo(unreads)})
+          let ids = getIdsFromUnreadList(unreads)
+          ids.forEach(id=>{
+            getEmailById(id).then((output)=>{
+              console.log('id',id)
+              console.log(output)
+            })
+          })
         })
       })
 
