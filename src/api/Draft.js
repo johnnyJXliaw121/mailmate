@@ -101,6 +101,11 @@ export const getHeadersFromDraftResponse = (response) =>{
     return headersObject;
 }
 
+/**
+ * Gets the all relevant content of a specific draft email
+ * @param response - raw output from getDraftRawFromId
+ * @returns {Array} - decoded body in string format
+ */
 export const getDraftFromDraftResponse = (response) => {
     const draftObject = {
         ... getHeadersFromDraftResponse(response),
@@ -111,6 +116,11 @@ export const getDraftFromDraftResponse = (response) => {
     return draftObject
 }
 
+/**
+ * Gets the all relevant content of a specific draft email by id
+ * @param response - draft id
+ * @returns {Promise<Array>}- decoded body in string format
+ */
 export const getDraftById = (id) => {
 return new Promise(function(resolve,reject){
   return getDraftRawFromId(id).then(draft => {
