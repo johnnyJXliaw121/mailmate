@@ -70,6 +70,7 @@ const getJsonFromDraftResponse = (response) => {
     const json = JSON.parse(response.body)
     return {
         payload: json.message.payload,
+        snippet: json.message.snippet,
         id: json.id,
         date: json.message.internalDate
     }
@@ -107,11 +108,13 @@ export const getHeadersFromDraftResponse = (response) =>{
  * @returns {Array} - decoded body in string format
  */
 export const getDraftFromDraftResponse = (response) => {
+    const json_response = getJsonFromDraftResponse(response)
     const draftObject = {
         ...getHeadersFromDraftResponse(response),
+        Snippet: json_response['snippet'],
         body: getBodyFromDraftResponse(response),
-        id:  getJsonFromDraftResponse(response)['id'],
-        dateUTC: getJsonFromDraftResponse(response)['date']
+        id:  json_response['id'],
+        dateUTC: json_response['date']
     }
     return draftObject
 }
