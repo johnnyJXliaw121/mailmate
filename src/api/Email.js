@@ -131,7 +131,7 @@ export const getEmailById = (id) => {
 export let sendEmail = (from, to, subject, message) => {
     // let encodedEmailBody = base64url(emailBody)
     let email = "From: "
-    email += email + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n\r\n" + message
+    email = email + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n\r\n" + message
     email = base64url(email)
     let encodedEmailBody = email.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
     return gapi.client.gmail.users.messages.send({
