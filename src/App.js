@@ -7,7 +7,7 @@ import { Value } from 'slate';
 import { Button, Icon, Toolbar } from './Components/components'
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-
+import Nav from './Components/nav';
 
 
 // import base64url from 'base64url'
@@ -305,7 +305,9 @@ class App extends Component {
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
       // the view below is the layout for 1 row 3 column for design
-      view = (<DragDropContext onDragEnd={this.onDragEnd}>
+      view = (<div> 
+        
+        <DragDropContext onDragEnd={this.onDragEnd}>
         {/* Drafts */}
         <Droppable droppableId="drafts">
           {
@@ -387,7 +389,7 @@ class App extends Component {
       </DragDropContext>
       
      
-      );
+      </div>);
 
 
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
