@@ -72,7 +72,7 @@ export default function SearchAppBar() {
 
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position="sticky">
                 <Toolbar style={{backgroundColor:'#74b5ff'}}>
                     <Box>
                         <MailOutlineIcon />

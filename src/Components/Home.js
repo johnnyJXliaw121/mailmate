@@ -37,7 +37,7 @@ const getListStyle = isDraggingOver => ({
   marginRight:'1%',
   background: isDraggingOver
     ? 'lightblue'
-    : '#F0F0F0',
+    : '#F3F3F3  ',
   padding: grid,
   width: 300
 });
@@ -135,6 +135,7 @@ class Home extends Component {
     return (
         <Grid container direction="row"
               justify="center"
+              style={{backgroundImage: 'url(${bg})'}}
               alignItems="flex-start" className={this.props.classes.root} spacing={2}>
     <DragDropContext onDragEnd={this.onDragEnd} style={{width: '100%'}}>
         {/* Unreads */}
@@ -159,7 +160,7 @@ class Home extends Component {
 
 
                             var finalTime = this.timeConversation(diff)
-                            return (<MiniCard id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/> )
+                            return (<MiniCard color="#74B5FF" id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/> )
 
                         })
                     }
@@ -187,7 +188,7 @@ class Home extends Component {
 
 
                 var finalTime = this.timeConversation(diff)
-                return (<MiniCard id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
+                return (<MiniCard color="#ff6363" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
 
               })
             }
@@ -217,7 +218,7 @@ class Home extends Component {
                 
                 var finalTime = this.timeConversation(diff)
 
-                return (<MiniCard id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
+                return (<MiniCard color="#FFE0A2" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
               })
             }
             {provided.placeholder}
@@ -248,7 +249,7 @@ class Home extends Component {
 
                 return (
 
-                    <MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="drafts"/>
+                    <MiniCard color="#958EE7" id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="drafts"/>
 
                 )
 

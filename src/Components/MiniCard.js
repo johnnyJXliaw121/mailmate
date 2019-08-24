@@ -113,7 +113,7 @@ class MiniCard extends Component {
     const letter = sender ? sender.charAt(0) : 'X'
     const body = this.props.body
     const emailNameToSend = this.props.emailName
-    const color = '5px solid ' + this.props.color
+    const color = '8px solid ' + this.props.color
     return (<div>
       <Draggable key={id} draggableId={id} index={index}>
         {
