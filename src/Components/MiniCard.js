@@ -86,7 +86,8 @@ class MiniCard extends Component {
         let subject = this.state.textValue
         let message = this.state.textBox
         createDraftMail(from, to, subject, message).then((response) => {
-          console.log('response', response);
+          let id = response.result.id;
+          this.props.addDraft(id)
         })
     };
 

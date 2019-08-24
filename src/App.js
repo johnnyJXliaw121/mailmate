@@ -49,6 +49,7 @@ class App extends Component {
     this.handleDelete = this.handleDelete.bind(this)
     this.reorder = this.reorder.bind(this)
     this.move = this.move.bind(this)
+    this.addDraft = this.addDraft.bind(this)
 
       let gapiInstance = gapi.auth2.getAuthInstance()
       gapiInstance.then(
@@ -129,6 +130,14 @@ class App extends Component {
     this.setState({[id]: result})
   };
 
+  addDraft(id) {
+    getDraftById(id).then((output) => {
+      let currDrafts = this.state.drafts
+      currDrafts.unshift(output)
+      this.setState({drafts: currDrafts})
+    })
+  };
+
   move(sourceId, destinationId, droppableSource, droppableDestination) {
     let source = this.state[sourceId]
     let destination = this.state[destinationId]
@@ -153,7 +162,7 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} urgents={this.state.urgents} handleDelete={this.handleDelete} reorder={this.reorder} move={this.move}/>
+      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} urgents={this.state.urgents} handleDelete={this.handleDelete} reorder={this.reorder} move={this.move} addDraft={this.addDraft}/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
