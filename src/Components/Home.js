@@ -42,9 +42,9 @@ const grid = 8;
 
 
 const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? 'lightblue' : 'lightgrey',
-    padding: grid,
-    width: 250
+    background: isDraggingOver ? 'lightblue' : 'lightblue',
+    padding: grid * 2,
+    width: 300
 });
 
 class Home extends Component {

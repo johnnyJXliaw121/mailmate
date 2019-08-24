@@ -11,10 +11,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import Box from "@material-ui/core/Box";
 
-const sender = {
-    fontFamily: 'Roboto',
-    textColor: 'red'
-}
+
 
 const grid = 15;
 
@@ -52,21 +49,25 @@ class MiniCard extends Component {
                             snapshot.isDragging,
                             provided.draggableProps.style
                         )}>
-                        <Card>
+                        <Card style={{borderRadius: '15px'}}>
                             <CardContent>
-                                <Typography>
+                                <Typography style={{marginTop: '-5px'}}>
                                     <span style={{color: 'black',
                                                     fontSize: '18px',
                                                     fontWeight: '600'}}>{sender}</span>
                                 </Typography>
                                 <Typography >
-                                    <Box fontWeight="fontWeightLight">{subject}</Box>
+                                    <Box style={{
+                                        fontFamily: 'Roboto, sans-serif',
+                                        paddingBottom: '5px'}}>{subject}</Box>
                                 </Typography>
-                                <Typography style={{marginBottom: '0px'}}>
+                                <Typography style={{marginBottom: '-10px'}}>
                                     <Box style={{fontFamily: 'Roboto, sans-serif',
                                                     fontSize: '15px',
                                                     color: '#b0b0b0',
-                                                    fontWeight: '200'}}>{snippet}</Box>
+                                                    fontWeight: '200',
+                                                    paddingTop: '8px',
+                                                    borderTop: '1px dotted #ccc'}}>{snippet}</Box>
                                 </Typography>
 
                             </CardContent>
