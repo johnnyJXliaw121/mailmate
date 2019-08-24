@@ -32,6 +32,7 @@ import {
   getIdsFromDraftList,
   createDraftMail, getBodyFromDraftResponse, getSubjectFromDraftResponse, getTextFromDraftMailById, getTextFromDraftMail
 } from "./api/Draft";
+import Home from "./Components/Home";
 
 var gapi = window.gapi
 
@@ -101,9 +102,9 @@ class App extends Component {
           //   console.log("mail assignment success!")
           // })
 
-          createNewLabel("QUEUE").then((response) => {
-            console.log("QUEUE label created")
-          })
+          // createNewLabel("QUEUE").then((response) => {
+          //   console.log("QUEUE label created")
+          // })
         }
 
       })
@@ -115,7 +116,7 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn == true){
       // ======= INSERT HOME BELOW =========
-      view = <div>Signed In!</div>
+      view = <Home />
     }
     else if (this.state.isSignedIn === false && this.state.isSignedIn != null){
       view = <div>Not Signed In<SignIn2 /></div>
@@ -123,9 +124,7 @@ class App extends Component {
       view = <div> Pending Authentication Update </div>
     }
     return (
-        <div className="App">
-          {view}
-        </div>
+          view
     )
   }
 }
