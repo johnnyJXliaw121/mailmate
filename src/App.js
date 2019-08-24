@@ -120,7 +120,7 @@ class App extends Component {
     gapiInstance.isSignedIn.listen((isSignedIn) => {
       this.setState({isSignedIn: isSignedIn})
       console.log("Signed in = ", isSignedIn)
-
+      if (isSignedIn){
       // ==== GAPI API CALLS ======
       // ==== Unread Email Calls ==
       let unreads = []
@@ -158,6 +158,7 @@ class App extends Component {
       getAllMailIdWithlabel('INBOX').then(out =>{
         console.log('getall mail with id',out)
       })
+    }
     })
   }
 
