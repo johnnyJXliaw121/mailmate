@@ -7,7 +7,8 @@ let gapi = window.gapi
  * Gets the list of draft emails from gmail api, along with all metadata/data
  * @returns {*}
  */
-export let getListOfDraftMails = () => {
+export const getListOfDraftMails = () => {
+    console.log('gapi', gapi);
     return gapi.client.gmail.users.drafts.list({
         'userId': 'me'
     })
@@ -18,7 +19,7 @@ export let getListOfDraftMails = () => {
  * @param draftBody - in ascii plain text (normal english)
  * @returns {*}
  */
-export let createDraftMail = (from, to, subject, message) => {
+export const createDraftMail = (from, to, subject, message) => {
     // let encodedEmailBody = base64url(emailBody)
     let email = "From: "
     email = email + from + "\r\n" + "To: " + to + "\r\n" + "Subject: " + subject + "\r\n\r\n" + message
@@ -41,10 +42,9 @@ export let createDraftMail = (from, to, subject, message) => {
  * @param response - raw output from getListOfDraftMails
  * @returns {Array} - array of draft email ID's
  */
-export let getIdsFromDraftList = (response) => {
-    let id = []
-    response.result.drafts.forEach((obj) => {
-        id.push(obj.id)
+export const getIdsFromDraftList = (response) => {
+    let id = response.result.drafts.map((obj) => {
+        return obj.id
     })
     return id
 }
@@ -54,54 +54,69 @@ export let getIdsFromDraftList = (response) => {
  * @param id - id of a specific draft email in string format
  * @returns {*}
  */
-export let getDraftFromId = (id) => {
+export const getDraftRawFromId = (id) => {
     return gapi.client.gmail.users.drafts.get({
         'userId': 'me',
         'id': id,
-        'format': 'raw'
+        'format': 'full'
     })
 }
 
-/** DEPRECATED FUNCTION!!!!
+/**
+ * Gets the payload of a specific draft email
+ * @param payload - full email message data
+ * @returns {Array} - decoded body in JSON format
+ */
+const getJsonFromDraftResponse = (response) => {
+    const json = JSON.parse(response.body)
+    return {
+        payload: json.message.payload,
+        id: json.id,
+        date: json.message.internalDate
+    }
+}
+
+/**
  * Gets the body content of a specific draft email
- * @param response - raw output from getDraftFromId
+ * @param response - raw output from getDraftRawFromId
  * @returns {Array} - decoded body in string format
  */
-export let getBodyFromDraftResponse = (response) => {
-    let encodedMsg = JSON.parse(response.body).message.payload.parts[0].body.data
-    encodedMsg = encodedMsg.replace(/-/g, '+') // replace '-' with '+'
-    encodedMsg = encodedMsg.replace(/_/g, '/') // replcae '_' with '/'
-    return base64.decode(encodedMsg)
+export const getBodyFromDraftResponse = (response) => {
+    let encodedMsg = getJsonFromDraftResponse(response).payload.body.data
+    const filteredMsg = encodedMsg.replace(/-/g, '+')// replace '_' with '/'
+        .replace(/_/g, '/'); // and replace '-' with '+'
+    return base64.decode(filteredMsg)
 }
 
 /**
- * Gets the subject header of a specific draft email
- * @param response - raw output from getDraftFromId
- * @returns {*}
+ * Gets the header content of a specific draft email
+ * @param response - raw output from getDraftRawFromId
+ * @returns {Array} - decoded body in string format
  */
-export let getSubjectFromDraftResponse = (response) => {
-    return JSON.parse(response.body).message.payload.headers[5].value
+export const getHeadersFromDraftResponse = (response) =>{
+    const headersArray = getJsonFromDraftResponse(response).payload.headers
+    let headersObject = {}
+    headersArray.forEach((field)=>{
+        headersObject[field.name] = field.value
+    })
+    return headersObject;
 }
 
-/**
- * Gets the sender information of a specific draft email
- * @param response - the raw output from getDraftFromId
- * @returns {*}
- */
-export let getSenderFromDraftResponse = (response) => {
-    return JSON.parse(response.body).message.payload.headers[5].value
-    // return JSON.parse(response.body)
+export const getDraftFromDraftResponse = (response) => {
+    const draftObject = {
+        ...getHeadersFromDraftResponse(response),
+        body: getBodyFromDraftResponse(response),
+        id:  getJsonFromDraftResponse(response)['id'],
+        dateUTC: getJsonFromDraftResponse(response)['date']
+    }
+    return draftObject
 }
 
-/**
- * gets text info such as sender, subject, message id, body, from draft response
- * @param response - raw output from getDraftFromId
- * @returns {string} - string of info, regex needed
- */
-// NOTES: works best with shorter drafts - regex still needed to separate subject, sending to, and body
-export let getTextFromDraftMail = (response) => {
-    response = response.result.message.raw.replace(/-/g, '+').replace(/_/g, '/')
-    let decoded = base64url.decode(response)
-    return decoded
+export const getDraftById = (id) => {
+return new Promise(function(resolve,reject){
+  return getDraftRawFromId(id).then(draft => {
+    //console.log(getDraftFromDraftResponse(draft))
+    resolve(getDraftFromDraftResponse(draft))
+  })
+})
 }
-
