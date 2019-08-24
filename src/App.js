@@ -161,7 +161,11 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales}/>
+      view = 
+      
+      <Home style={{background: "linear-gradient(90deg, #77c9d4, #57bc90)"}}
+      drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales}/>
+      
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
@@ -170,7 +174,8 @@ class App extends Component {
       </div>
     }
 
-    return (view);
+    return (      view
+      );
 
   }
 }

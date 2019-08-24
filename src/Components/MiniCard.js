@@ -122,11 +122,17 @@ class MiniCard extends Component {
                                 fontWeight: '600'}}>{sender}</span>
                 </Typography>
                 <Typography >
+                <div >
                 <Box style={{
                     fontFamily: 'Montserrat, sans-serif',
-                    paddingBottom: '5px'}}>{subject}</Box>
+                    paddingBottom: '1px'}}>{subject}
+                    </Box>
+                    <p>
+                        {this.props.finalTime} Ago
+                    </p>
+                    </div>
                 </Typography>
-                <Typography style={{marginBottom: '-10px'}}>
+                <Typography style={{marginBottom: '-5px'}}>
                 <Box style={{fontFamily: 'Montserrat',
                     fontSize: '12px',
                     color: 'black',

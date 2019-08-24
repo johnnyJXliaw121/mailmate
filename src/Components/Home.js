@@ -41,6 +41,9 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 const grid = 8;
 
 const getListStyle = isDraggingOver => ({
+  marginBottom:'2%',
+  marginTop:'2%',
+  marginRight:'1%',
   background: isDraggingOver
     ? 'lightblue'
     : 'lightgrey',
@@ -102,18 +105,65 @@ class Home extends Component {
     console.log("YEE MOTHERUCKER")
   }
 
+  timeConversation=(millisec) =>{
+    var seconds = (millisec / 1000).toFixed(1);
+    var minutes = (millisec / (1000 * 60)).toFixed(1);
+
+    var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
+
+    var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
+
+    if (seconds < 60) {
+        return seconds + " Sec";
+    } else if (minutes < 60) {
+        return minutes + " Min";
+    } else if (hours < 24) {
+        return hours + " Hrs";
+    } else {
+        return days + " Days"
+    }
+  }
+
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
   render() {
-    return (<DragDropContext onDragEnd={this.onDragEnd}>
+    return (
+      
+    <DragDropContext onDragEnd={this.onDragEnd}>
+      <div style={{fontSize:'56px',fontWeight:'bold',fontFamily: 'Montserrat, sans-serif',marginTop:'20%',marginLeft:'3%',marginRight:'10%'}}>
+        <div style={{position: 'fixed',
+  width: '150px',color:'rgb(235,45,79)'
+ }}>
+        Mail   &nbsp;Mate
+        </div>
+        </div>
       {/* Drafts */}
-      <Droppable droppableId="drafts">
+      <Droppable droppableId="drafts" style={{marginTop:'3%',marginBottom:'3%'}}>
+        
         {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+          <div style={{display:'flex',marginLeft: '30%',marginRight: '30%',color:'rgb(42,20,12)'}}>
+            <h2 style={{marginRight:'1%'}}>Drafts</h2>
+            <img style={{marginTop:'10%',color:'rgb(42,20,12)'}} src="https://image.flaticon.com/icons/png/512/46/46064.png" alt="Smiley face" height="42" width="42"></img>
+            </div>
             {
               this.props.drafts.map((output, index) => {
                 let name = output.To.substring(0, output.To.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
+                console.log(output.Date);
+                var mydate = new Date(output.Date);
+               
+                var now = new Date();
+             
+                var diff = Math.abs(now - mydate);
+
+                
+                var finalTime = this.timeConversation(diff)
+                
+                return (
+                  
+                <MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>
+                
+                )
               })
             }
             {provided.placeholder}
@@ -124,11 +174,23 @@ class Home extends Component {
       <Droppable droppableId="unreads">
         {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+            <div style={{display:'flex',marginLeft: '25%',marginRight: '30%'}} >
+            <h2 style={{marginRight:'1%'}}>Unreads</h2>
+            <img style={{marginTop:'5%',fill:'#EF8200',stroke:'#EF8200'}} src="https://cdn.iconscout.com/icon/premium/png-256-thumb/mark-as-unread-1487398-1258556.png" alt="Smiley face" height="42" width="42"></img>
+            </div>
             {
               this.props.unreads.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<")); 
                 console.log(output)
-                return (<MiniCard id={output.id} index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
+                var mydate = new Date(output.Date);
+               
+                var now = new Date();
+             
+                var diff = Math.abs(now - mydate);
+
+                
+                var finalTime = this.timeConversation(diff)
+                return (<MiniCard id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
@@ -136,20 +198,33 @@ class Home extends Component {
         }
       </Droppable>
       {/* Sales */}
-      <Droppable droppableId="sales">
+      <Droppable droppableId="sales" >
         {
-          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)} >
+            <div style={{display:'flex',marginLeft: '30%',marginRight: '30%'}}>
+            <h2 style={{marginRight:'1%',color:'rgb(42,20,12'}}>Sales</h2>
+            <img style={{marginTop:'10%',fill:'#EF8200',stroke:'#EF8200'}} src="https://svgur.com/i/EfU.svg" alt="Smiley face" height="42" width="42"></img>
+            </div>
             {
               this.props.sales.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
+                var mydate = new Date(output.Date);
+               
+                var now = new Date();
+             
+                var diff = Math.abs(now - mydate);
+
+                
+                var finalTime = this.timeConversation(diff)
+                return (<MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
           </div>)
         }
       </Droppable>
-    </DragDropContext>);
+    </DragDropContext>
+    );
   }
 }
 

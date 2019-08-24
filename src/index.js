@@ -24,7 +24,8 @@ gapi.load('client:auth2', () => {
     discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"],
     scope: "https://mail.google.com/"
   })
-  ReactDOM.render(<App firebase={firebase} />, document.getElementById('root'))
+  ReactDOM.render(<App style= {{background: 'linear-gradient(90deg, #77c9d4, #57bc90)'}}
+    firebase={firebase} />, document.getElementById('root'))
 })
 
 
