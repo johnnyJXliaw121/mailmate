@@ -113,7 +113,7 @@ class Home extends Component {
             {
               this.props.drafts.map((output, index) => {
                 let name = output.To.substring(0, output.To.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
@@ -126,8 +126,9 @@ class Home extends Component {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
             {
               this.props.unreads.map((output, index) => {
-                let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
+                let name = output.From.substring(0, output.From.indexOf("<")); 
+                console.log(output)
+                return (<MiniCard id={output.id} index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
@@ -141,7 +142,7 @@ class Home extends Component {
             {
               this.props.sales.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
