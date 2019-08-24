@@ -110,10 +110,11 @@ class MiniCard extends Component {
     return (<div>
       <Draggable key={id} draggableId={id} index={index}>
         {
-          (provided, snapshot) => (<div onClick={() => this.onOpenModal(subject,body)} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+          (provided, snapshot) => (
+          <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
           <Card style={{backgroundColor: '#white',
                           borderLeft: '5px solid #74B5FF'}}>
-              <CardContent>
+              <CardContent >
                 <Typography style={{marginTop: '-5px'}}>
                 <span style={{color: '#74b5ff',
                                 fontFamily: 'Montserrat, sans-serif',
@@ -129,10 +130,11 @@ class MiniCard extends Component {
                 <Box style={{fontFamily: 'Montserrat',
                     fontSize: '12px',
                     color: 'black',
+                    
                     fontWeight: '50',
                     paddingTop: '8px',
                     opacity: '0.5',
-                    borderTop: '1px solid #ccc'}}>{snippet}</Box>
+                    borderTop: '1px solid #ccc'}} onClick={() => this.onOpenModal(subject,body)}>{snippet}</Box>
                 </Typography>
 
               </CardContent>
