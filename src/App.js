@@ -131,35 +131,6 @@ class App extends Component {
     })
   }
 
-  // onDragEnd = result => {
-  //   const {source, destination} = result;
-  //
-  //    dropped outside the list
-  //   if (!destination) {
-  //     return;
-  //   }
-  //
-  //   if (source.droppableId === destination.droppableId) {
-  //     const items = this.reorder(this.getList(source.droppableId), source.index, destination.index);
-  //
-  //     let state = {
-  //       items
-  //     };
-  //
-  //     if (source.droppableId === 'droppable2') {
-  //       state = {
-  //         selected: items
-  //       };
-  //     }
-  //
-  //     this.setState(state);
-  //   } else {
-  //     const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
-  //
-  //     this.setState({items: result.droppable, selected: result.droppable2});
-  //   }
-  // };
-
   handleDelete(mail_id, label) {
     let newMailArray = this.state[label].filter((item) => {
       return item.id != mail_id

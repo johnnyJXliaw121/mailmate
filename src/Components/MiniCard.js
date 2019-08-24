@@ -104,105 +104,13 @@ class MiniCard extends Component {
 
   }
 
-    render() {
-        const index = this.props.index
-        const id = this.props.id
-        const sender = this.props.sender
-        const subject = this.props.subject
-        const snippet = this.props.snippet
-
-        const letter = sender ? sender.charAt(0) : 'X'
-
-
-                                                // onClick={() => this.onOpenModal("item.id")}
-
-
-//         return (<div>
-//             <Draggable key={id} draggableId={id} index={index}>
-//                 {
-//                     (provided, snapshot) => (
-//                         <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-//                         <Card style={{backgroundColor: '#white',
-//                             borderLeft: '5px solid #74B5FF'}}>
-//                             <CardHeader
-//                                 avatar={
-//                                     <Avatar aria-label="recipe">
-//                                         {letter}
-//                                     </Avatar>
-//                                 }
-//                                 action={
-//                                     <IconButton aria-label="settings">
-//                                         <DeleteIcon onClick={() => this.props.handleDelete(id, this.props.label)}/>
-//                                     </IconButton>
-//                                 }
-//                                 title={sender}
-//
-//                             />
-//                             <CardContent style={{paddingTop: '-50px'}}>
-//                                 <Typography>
-//                                     <Box style={{
-//                                         fontFamily: 'Montserrat, sans-serif',
-//                                         paddingBottom: '5px'}}>{subject}</Box>
-//                                 </Typography>
-//                                 <Typography style={{marginBottom: '-10px'}}>
-//                                     <Box style={{fontFamily: 'Montserrat',
-//                                         fontSize: '12px',
-//                                         color: 'black',
-//                                         fontWeight: '50',
-//                                         paddingTop: '8px',
-//                                         opacity: '0.5'}}>
-//                                         {snippet}
-//                                         onClick={() => this.onOpenModal("item.id")}
-//                                     </Box>
-//                                 </Typography>
-//
-
-//                             </CardContent>
-//                         </Card>
-//                     </div>)
-//                 }
-//             </Draggable>
-//             <Modal open={this.state.open} onClose={this.onCloseModal} center="center">
-//                 <form style={{
-//                     width: '50em',
-//                     height: '30em'
-//                 }}>
-//                     <h1>Title</h1>
-//                     <p>{this.state.title}</p>
-//                     <h1>Body</h1>
-//
-//                     <CKEditor editor={ClassicEditor} data={this.state.textBox} onInit={editor => {
-//                         // You can store the "editor" and use when it is needed.
-//                         console.log('Editor is ready to use!', editor);
-//                     }} onChange={(event, editor) => {
-//                         const data = editor.getData();
-//                         console.log({event, editor, data});
-//                         this.setState({textBox: data});
-//
-//                     }} onBlur={editor => {
-//                         console.log('Blur.', editor);
-//                     }} onFocus={editor => {
-//                         console.log('Focus.', editor);
-//                     }}/>
-//                     <div style={{
-//                         textAlign: 'center',
-//                         marginTop: '10em'
-//                     }} onClick={() => sendEmail("MailMate <mailmate.aus@gmail.com>", "MailMate <mailmate.aus@gmail.com>", "test", "hello test message").then((resp) => console.log("email sent"))}>
-//                         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-//                     </div>
-//                 </form>
-//             </Modal>
-//         </div>)
-//     }
-// =======
-
-
   render() {
     const index = this.props.index
     const id = this.props.id
     const sender = this.props.sender
     const subject = this.props.subject
     const snippet = this.props.snippet
+    const letter = sender ? sender.charAt(0) : 'X'
     const body = this.props.body
     const emailNameToSend = this.props.emailName
     return (<div>
@@ -227,12 +135,6 @@ class MiniCard extends Component {
 
                           />
               <CardContent >
-                <Typography style={{marginTop: '-5px'}}>
-                <span style={{color: '#74b5ff',
-                                fontFamily: 'Montserrat, sans-serif',
-                                fontSize: '20px',
-                                fontWeight: '600'}}>{sender}</span>
-                </Typography>
                 <Typography >
                 <Box style={{
                     fontFamily: 'Montserrat, sans-serif',
@@ -294,7 +196,7 @@ class MiniCard extends Component {
       </Modal>
     </div>)
   }
-
+}
 
 
 export default MiniCard
