@@ -22,9 +22,9 @@ import {
   // getDraftFromDraftResponse,
   getDraftById
 } from "./api/Draft"
-
 // import ReactDOM from 'react-dom';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import { getListOfLabelData, getAllMailWithLabel, getLabelNamesFromLabelData, getAllMailIdWithlabel } from './api/Labels';
 
 var gapi = window.gapi
 
@@ -140,13 +140,23 @@ class App extends Component {
       let drafts = []
       getListOfDraftMails().then((response) => {
         let ids = getIdsFromDraftList(response)
-
         ids.forEach((id) => {
           getDraftById(id).then((output) => {
             drafts.push(output)
             this.setState({drafts: drafts})
           })
         })
+      })
+      
+      // ===== Label Calls ======
+      getListOfLabelData().then(labels=>{
+        console.log('List of label Data',labels)
+        console.log('label names',getLabelNamesFromLabelData(labels))
+        
+      })
+      
+      getAllMailIdWithlabel('INBOX').then(out =>{
+        console.log('getall mail with id',out)
       })
     })
   }

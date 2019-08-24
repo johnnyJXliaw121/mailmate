@@ -3,30 +3,26 @@ let gapi = window.gapi
 
 /**
  * Gets list of available lables in user's inbox in ARRAY
- * @returns {*}
+ * @param labelData - this is returned from getListLebelData.then((labelData)=>{})
+ * @returns {Promise<Array>} Array of strings with label names
  */
-export let getListOfLabelNames = () => {
-    let labels = []
-    getListOfLabelsRaw().then((response) => {
-        response.result.labels.forEach((labelObj) => {
-            labels.push(labelObj.name)
-        })
+export let getLabelNamesFromLabelData = (labelData) => {
+    return labelData.map(labelObj=>{
+        return labelObj.name
     })
-    return labels
 }
 
 /**
  * Returns an array of objects with Label_Name and associated Label_ID
- * @returns [{id: xxxxx, name: xxxxx}, ..., ...]
- */
+ * @returns {Promise<labelData>}[{id: xxxxx, name: xxxxx}, ..., ...]
+ */ 
 export let getListOfLabelData = () => {
-    var data = []
-    getListOfLabelsRaw().then((response) => {
-        response.result.labels.forEach((label) => {
-            data.push(label)
+    const listPromise = new Promise(function(resolve,reject){
+        getListOfLabelsRaw().then((response) => {
+            resolve(response.result.labels)
         })
     })
-    return data
+    return listPromise
 }
 
 /**
@@ -53,13 +49,16 @@ export let getLabelFromId = (id) => {
  * @returns {Array}
  */
 export let getAllMailIdWithlabel = (label_id) => {
-    let ids = []
-    getAllMailWithLabel(label_id).then((response) => {
-        response.result.messages.forEach((mail) => {
-            ids.push(mail)
+    return new Promise(function (resolve, reject) {
+        getAllMailWithLabel(label_id).then((response) => {
+            resolve(response.result.messages.map(mail=>{
+                return mail.id
+            }))
+        }).catch(err=>{
+            console.log("Error with getAllMailWithLabel in getAllMailIdWithlabel",err)
+            reject([])
         })
     })
-    return ids
 }
 
 /**
