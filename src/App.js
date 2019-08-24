@@ -84,7 +84,7 @@ class App extends Component {
     gapiInstance.isSignedIn.listen((isSignedIn) => {
       this.setState({isSignedIn: isSignedIn})
       console.log("Signed in = ", isSignedIn)
-
+      if (isSignedIn){
       // ==== GAPI API CALLS ======
       // ==== Unread Email Calls ==
       let unreads = []
@@ -127,6 +127,7 @@ class App extends Component {
           })
         })
       })
+    }
     })
   }
 

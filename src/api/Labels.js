@@ -44,6 +44,16 @@ export let getLabelFromId = (id) => {
 }
 
 /**
+ * 
+ * @param {labelName} 
+ */
+export let getIdFromLabel = (labelName,labelData) =>{
+    return labelData.find(label=>{
+        return label.name == labelName;
+    })
+}
+
+/**
  * returns the id and thread_id of emails with a specific label_id
  * @param label_id
  * @returns {Array}

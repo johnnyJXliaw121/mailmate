@@ -17,6 +17,7 @@ import {Value} from 'slate';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {sendEmail} from "../api/Email";
+import { Input } from 'react-nice-inputs';
 
 // this is for the modal
 const initialValue = Value.fromJSON({
@@ -64,12 +65,19 @@ class MiniCard extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: initialValue
+      value: initialValue,
+      textValue:'',
     }
+    this.handleChange = this.handleChange.bind(this);
+
   }
 
-  onOpenModal = (titleReceived) => {
-    this.setState({open: true, title: titleReceived});
+  onOpenModal = (titleReceived,bodyReceived) => {
+    this.setState({
+        open: true, 
+        title: titleReceived,
+        body: bodyReceived
+    });
   };
 
   onCloseModal = () => {
@@ -80,20 +88,33 @@ class MiniCard extends Component {
     this.setState({value})
   }
 
+  handleChange(event) {
+      console.log(event.target.value);
+    this.setState({textValue: event.target.value});
+  }
+
+  onSendEmail = (from,to,subject,message) => {
+    sendEmail(from, to, subject, message).then((resp) => console.log("email sent"))
+    this.setState({open: false});
+
+}
+
   render() {
     const index = this.props.index
     const id = this.props.id
     const sender = this.props.sender
     const subject = this.props.subject
     const snippet = this.props.snippet
-
+    const body = this.props.body
+    const emailNameToSend = this.props.emailName
     return (<div>
       <Draggable key={id} draggableId={id} index={index}>
         {
-          (provided, snapshot) => (<div onClick={() => this.onOpenModal("item.id")} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+          (provided, snapshot) => (
+          <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
           <Card style={{backgroundColor: '#white',
                           borderLeft: '5px solid #74B5FF'}}>
-              <CardContent>
+              <CardContent >
                 <Typography style={{marginTop: '-5px'}}>
                 <span style={{color: '#74b5ff',
                                 fontFamily: 'Montserrat, sans-serif',
@@ -109,10 +130,11 @@ class MiniCard extends Component {
                 <Box style={{fontFamily: 'Montserrat',
                     fontSize: '12px',
                     color: 'black',
+                    
                     fontWeight: '50',
                     paddingTop: '8px',
                     opacity: '0.5',
-                    borderTop: '1px solid #ccc'}}>{snippet}</Box>
+                    borderTop: '1px solid #ccc'}} onClick={() => this.onOpenModal(subject,body)}>{snippet}</Box>
                 </Typography>
 
               </CardContent>
@@ -122,13 +144,21 @@ class MiniCard extends Component {
       </Draggable>
       <Modal open={this.state.open} onClose={this.onCloseModal} center="center">
         <form style={{
-            width: '50em',
-            height: '30em'
+            maxWidth: '50em',
+            height: '30em',
+            overflow:'hidden',
+            overflowY:'auto'
           }}>
-          <h1>Title</h1>
-          <p>{this.state.title}</p>
-          <h1>Body</h1>
+          <h1 style={{textAlign:'center',fontSize:'40px'}}>{this.state.title}</h1>
+          <h2 >Message From {sender}</h2>
+          <p>{this.state.body}</p>
+          <h2>Send your Email Below</h2>
+          <div style={{display:'flex'}}>
+          <h3 style={{marginRight:'2%'}}> Subject </h3>
+                    
 
+          <input style={{height:'3em',marginTop:'2px'}} value={this.state.textValue} onChange={this.handleChange}></input>
+          </div>
           <CKEditor editor={ClassicEditor} data={this.state.textBox} onInit={editor => {
               // You can store the "editor" and use when it is needed.
               console.log('Editor is ready to use!', editor);
@@ -144,8 +174,8 @@ class MiniCard extends Component {
             }}/>
           <div style={{
               textAlign: 'center',
-              marginTop: '10em'
-            }} onClick={() => sendEmail("MailMate <mailmate.aus@gmail.com>", "MailMate <mailmate.aus@gmail.com>", "test", "hello test message").then((resp) => console.log("email sent"))}>
+              marginTop: '2em'
+            }} onClick={()=>this.onSendEmail('MailMate <mail.mate@gmail.com',emailNameToSend,this.state.textValue,this.state.textBox)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
           </div>
         </form>
