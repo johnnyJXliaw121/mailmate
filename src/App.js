@@ -96,7 +96,8 @@ class App extends Component {
     this.state = {
       items: getItems(10),
       selected: getItems(5, 10),
-      isSignedIn: null
+      isSignedIn: null,
+      drafts: []
     };
     // ================ Initializes Gapi Auth ====================
     // this.getListOfLabels = getListOfLabels().bind(this)
@@ -123,20 +124,18 @@ class App extends Component {
       console.log("Signed in = ", isSignedIn)
 
       // ==== GAPI API CALLS ======
-      var from = "MailMate <mailmate.aus@gmail.com>"
-      var to = "Johnny Liaw <johnnyliaw121@gmail.com>"
-      var subject = "Random Email"
-      var message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
-
+      let drafts = []
       getListOfDraftMails().then((response) => {
         let ids = getIdsFromDraftList(response)
-        console.log(ids)
+
         ids.forEach((id) => {
-          getDraftById(id).then((output) => console.log(output))
+          getDraftById(id).then((output) => {
+            drafts.push(output)
+            this.setState({drafts: drafts})
+          })
         })
       })
     })
-
   }
 
   /**
@@ -187,18 +186,22 @@ class App extends Component {
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
       // the view below is the layout for 1 row 3 column for design
+      console.log('this.state.drafts', this.state.drafts);
       view = (<DragDropContext onDragEnd={this.onDragEnd}>
         <Droppable droppableId="droppable">
           {
             (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
               {
-                this.state.items.map((item, index) => (<Draggable key={item.id} draggableId={item.id} index={index}>
-                  {
-                    (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                      {item.content}
-                    </div>)
-                  }
-                </Draggable>))
+                this.state.drafts.map((output, index) => {
+                  return (<Draggable key={output.id} draggableId={output.id} index={index}>
+                    {
+                      (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+                        {output.Subject}
+                      </div>)
+                    }
+                  </Draggable>)
+                })
+
               }
               {provided.placeholder}
             </div>)
