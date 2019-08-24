@@ -3,26 +3,9 @@ import ReactDOM from 'react-dom';
 import Card from './Card'
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import MiniCard from './MiniCard'
-import {assignLabelToMail, removeLabelFromMail} from "../api/Labels"
+import {getListOfLabelData, getLabelNamesFromLabelData, assignLabelToMail, removeLabelFromMail} from "../api/Labels"
 
 var gapi = window.gapi
-
-/**
- * Moves an item from one list to another list.
- */
-// function move(source, destination, droppableSource, droppableDestination) {
-//   const sourceClone = Array.from(source);
-//   const destClone = Array.from(destination);
-//   const [removed] = sourceClone.splice(droppableSource.index, 1);
-//
-//   destClone.splice(droppableDestination.index, 0, removed);
-//
-//   const result = {};
-//   result[droppableSource.droppableId] = sourceClone;
-//   result[droppableDestination.droppableId] = destClone;
-//
-//   return result;
-// };
 
 const grid = 8;
 
@@ -69,32 +52,25 @@ class Home extends Component {
       }
 
       let emailId = this.props[source.droppableId][source.index].id
-
-      // let gapiInstance = gapi.auth2.getAuthInstance()
-      // gapiInstance.then(
-      // //On Init Function
-      // () => {
-      //   //Check if it is signed in now!
-      //   this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
-      //   console.log("Initial GAPI State", this.state.isSignedIn)
+      // assignLabelToMail(listIds[destination.droppableId], emailId).then((response) => {
+      //   console.log('response', response);
+      //    removeLabelFromMail(listIds[source.droppableId], emailId).then((response) => {
+      //      console.log('response', response);
+      //
+      //    })
       // })
-      //
-      // // Set listener for future GAPI authentication state changes
-      // gapiInstance.isSignedIn.listen((isSignedIn) => {
-      //   this.setState({isSignedIn: isSignedIn})
-      //   console.log("Signed in = ", isSignedIn)
-      //   if (isSignedIn) {
-      //
-      //     assignLabelToMail(listIds[destination.droppableId], emailId).then((response) => {
-      //       console.log('response', response);
-      //       removeLabelFromMail(listIds[source.droppableId], emailId).then((response) => {
-      //
-      //       })
-      //     })
-      //   }
+      // gapi.client.gmail.users.messages.modify({
+      //     'userId': 'me',
+      //     'id': destination.droppableId,
+      //     'addLabelIds': emailId
+      // }).then((response)=>{
+      //   console.log('response', response);
       // })
+      getListOfLabelData().then(labels => {
+        console.log('List of label Data', labels)
+        console.log('label names', getLabelNamesFromLabelData(labels))
+      })
       this.props.move(source.droppableId, destination.droppableId, source, destination);
-      // move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
     }
   };
 
@@ -123,7 +99,6 @@ class Home extends Component {
             {
               this.props.unreads.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                console.log(output)
                 return (<MiniCard id={output.id} index={index} emailName={output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/>)
               })
             }

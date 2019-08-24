@@ -24,6 +24,8 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {sendEmail} from "../api/Email";
 import { Input } from 'react-nice-inputs';
 
+import {createDraftMail} from "../api/Draft"
+
 // this is for the modal
 const initialValue = Value.fromJSON({
   document: {
@@ -79,6 +81,13 @@ class MiniCard extends Component {
 
     onCloseModal = () => {
         this.setState({open: false});
+        let from = 'MailMate <mail.mate@gmail.com>'
+        let to = this.props.emailName
+        let subject = this.state.textValue
+        let message = this.state.textBox
+        createDraftMail(from, to, subject, message).then((response) => {
+          console.log('response', response);
+        })
     };
 
   onOpenModal = (titleReceived,bodyReceived) => {
@@ -94,7 +103,7 @@ class MiniCard extends Component {
     }
 
     handleChange(event) {
-        console.log(event.target.value);
+      console.log(event.target.value);
       this.setState({textValue: event.target.value});
     }
 

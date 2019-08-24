@@ -91,10 +91,10 @@ class App extends Component {
           })
 
           // ===== Label Calls ======
-          getListOfLabelData().then(labels => {
-            console.log('List of label Data', labels)
-            console.log('label names', getLabelNamesFromLabelData(labels))
-          })
+          // getListOfLabelData().then(labels => {
+          //   console.log('List of label Data', labels)
+          //   console.log('label names', getLabelNamesFromLabelData(labels))
+          // })
 
           let sales = [];
           getAllMailIdWithlabel('Label_6111354806179621733').then((response) => {
@@ -137,7 +137,7 @@ class App extends Component {
 
     const [removed] = sourceClone.splice(droppableSource.index, 1);
     destClone.splice(droppableDestination.index, 0, removed);
-    
+
     this.setState({[sourceId]: sourceClone});
     this.setState({[destinationId]: destClone});
   };
