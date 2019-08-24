@@ -42,7 +42,7 @@ const grid = 8;
 
 
 const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? '#fff' : '#fff',
+    background: isDraggingOver ? '#FAFAFA' : '#FAFAFA',
     padding: grid * 2,
     width: 320
 });

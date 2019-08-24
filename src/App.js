@@ -67,7 +67,7 @@ class App extends Component {
 
         // ==== GAPI API CALLS ======
         var from = "MailMate <mailmate.aus@gmail.com>"
-        var to = "Johnny Liaw <johnnyliaw121@gmail.com>"
+        var to = "MailMate <mailmate.aus@gmail.com>"
         var subject = "Random Email"
         var message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
 
@@ -75,6 +75,11 @@ class App extends Component {
           getListOfUnreadMails().then((unreads) => {
             this.setState({unreads: getUnreadMailInfo(unreads)})
           })
+
+          sendEmail(from, to, subject, message).then((resp) => {
+            console.log("email sent")
+          })
+
           // getListOfDraftMails().then((response) => {
           //   let ids = getIdsFromDraftList(response)
           //   console.log(ids)

@@ -11,6 +11,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import Box from "@material-ui/core/Box";
 import { shadows } from '@material-ui/system';
+import { withStyles } from '@material-ui/core/styles';
 
 
 
@@ -24,6 +25,20 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     margin: `0 0 ${grid}px 0`,
     ...draggableStyle
 });
+
+const CustomCardContentStyle = {
+    root: {
+        padding: '10px'
+    }
+};
+class CustomCardContent extends Component{
+    render(){
+        return(
+            <CardContent classes={{root: this.props.classes.root}}/>
+        )
+    }
+}
+CustomCardContent = withStyles(CustomCardContentStyle)(CustomCardContent);
 
 class MiniCard extends Component {
     handleClick () {
@@ -51,27 +66,29 @@ class MiniCard extends Component {
                             snapshot.isDragging,
                             provided.draggableProps.style
                         )}>
-                        <Card style={{boxShadow: '1px 2px 7px 0px rgba(0,0,0,0.75)'}}>
+                        <Card style={{backgroundColor: '#white',
+                                        borderLeft: '5px solid #74B5FF'}}>
                             <CardContent>
                                 <Typography style={{marginTop: '-5px'}}>
-                                    <span style={{color: 'black',
-                                                    fontSize: '18px',
+                                    <span style={{color: '#74b5ff',
+                                                    fontFamily: 'Montserrat, sans-serif',
+                                                    fontSize: '20px',
                                                     fontWeight: '600'}}>{sender}</span>
                                 </Typography>
                                 <Typography >
                                     <Box style={{
-                                        fontFamily: 'Roboto, sans-serif',
+                                        fontFamily: 'Montserrat, sans-serif',
                                         paddingBottom: '5px'}}>{subject}</Box>
                                 </Typography>
-                                <Typography style={{marginBottom: '-10px'}}>
-                                    <Box style={{fontFamily: 'Roboto, sans-serif',
-                                                    fontSize: '15px',
-                                                    color: '#bcbcbc',
-                                                    fontWeight: '200',
-                                                    paddingTop: '8px',
-                                                    borderTop: '1px dotted #ccc'}}>{snippet}</Box>
+                                    <Typography style={{marginBottom: '-10px'}}>
+                                        <Box style={{fontFamily: 'Montserrat',
+                                            fontSize: '12px',
+                                            color: 'black',
+                                            fontWeight: '50',
+                                            paddingTop: '8px',
+                                            opacity: '0.5',
+                                            borderTop: '1px solid #ccc'}}>{snippet}</Box>
                                 </Typography>
-
                             </CardContent>
                         </Card>
                     </div>
