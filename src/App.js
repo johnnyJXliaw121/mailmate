@@ -1,9 +1,21 @@
 import React, {Component} from 'react';
 // import SignIn from './Components/SignIn'
 import SignIn2 from './Components/SignIn2'
-// import base64url from 'base64url'
-// import {auth} from 'firebase/app'
-// import {getListOfLabels} from "./api/Labels";
+import base64url from 'base64url'
+import {auth} from 'firebase/app'
+import {
+  assignLabelToMail,
+  createNewLabel,
+  getAllMailIdWithlabel,
+  getAllMailWithlabel,
+  getAllMailWithLabel,
+  getListOfLabelData,
+  getListOfLabelMetadata,
+  getListOfLabelNames,
+  getListOfLabels,
+  getListOfLabelsRaw,
+  removeLabelFromMail
+} from "./api/Labels";
 import {
   getIdsFromUnreadList,
   getListOfUnreadMails,
@@ -25,6 +37,7 @@ import {
 
 // import ReactDOM from 'react-dom';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import Home from "./Components/Home";
 
 var gapi = window.gapi
 
@@ -111,9 +124,9 @@ class App extends Component {
       this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
       console.log("Initial GAPI State", this.state.isSignedIn)
       let currentUser = gapiInstance.currentUser.get()
-      currentUser.reloadAuthResponse().then((resp) => {
-        console.log(resp)
-      })
+      // currentUser.reloadAuthResponse().then((resp) => {
+      //   console.log(resp)
+      // })
     })
 
     // Set listener for future GAPI authentication state changes
@@ -135,9 +148,43 @@ class App extends Component {
           })
         })
       })
+      // if (isSignedIn) {
+      //   getListOfUnreadMails().then((unreads) => {
+      //     this.setState({unreads: getUnreadMailInfo(unreads)})
+      //   })
+      //    getListOfDraftMails().then((response) => {
+      //      let ids = getIdsFromDraftList(response)
+      //      console.log(ids)
+      //      ids.forEach((id) => {
+      //
+      //      getDraftFromId(id).then((draft) => {
+      //        console.log(draft)
+      //        console.log(getTextFromDraftMail(draft))
+      //      })
+      //      })
+      //    })
+      //
+      //    createDraftMail(from, to, subject, message).then(()=>{
+      //      console.log("success!")
+      //    })
+      //
+      //   console.log("==== LABEL DATA =====")
+      //   this.setState({label: getListOfLabelData()})
+      //
+      //   console.log("==== Retrieving Mail With Label ====")
+      //   console.log(getAllMailIdWithlabel("Label_6111354806179621733"))
+      //
+      //    console.log("=== assigning label to mail ===")
+      //    assignLabelToMail(["Label_6111354806179621733"],"16ca369a11d9abe0").then((response) => {
+      //      console.log("mail assignment success!")
+      //    })
+      //
+      //    createNewLabel("QUEUE").then((response) => {
+      //      console.log("QUEUE label created")
+      // })
 
       // ==== Draft Calls
-      let drafts = []
+      let drafts = [];
       getListOfDraftMails().then((response) => {
         let ids = getIdsFromDraftList(response)
 
@@ -198,66 +245,69 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      // the view below is the layout for 1 row 3 column for design
-      view = (<DragDropContext onDragEnd={this.onDragEnd}>
-        {/* Drafts */}
-        <Droppable droppableId="drafts">
-          {
-            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-              {
-                this.state.drafts.map((output, index) => {
-                  return (<Draggable key={output.id} draggableId={output.id} index={index}>
-                    {
-                      (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                        {output.Subject}
-                      </div>)
-                    }
-                  </Draggable>)
-                })
-
-              }
-              {provided.placeholder}
-            </div>)
-          }
-        </Droppable>
-        {/* Unreads */}
-        <Droppable droppableId="unreads">
-          {
-            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-              {
-                this.state.unreads.map((output, index) => {
-                  return (<Draggable key={output.id} draggableId={output.id} index={index}>
-                    {
-                      (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                        {output.Subject}
-                      </div>)
-                    }
-                  </Draggable>)
-                })
-
-              }
-              {provided.placeholder}
-            </div>)
-          }
-        </Droppable>
-        <Droppable droppableId="droppable2">
-          {
-            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-              {
-                this.state.selected.map((item, index) => (<Draggable key={item.id} draggableId={item.id} index={index}>
-                  {
-                    (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                      {item.content}
-                    </div>)
-                  }
-                </Draggable>))
-              }
-              {provided.placeholder}
-            </div>)
-          }
-        </Droppable>
-      </DragDropContext>);
-
+      //    the view below is the layout for 1 row 3 column for design
+      //   view = (<DragDropContext onDragEnd={this.onDragEnd}>
+      //     {/* Drafts */}
+      //     <Droppable droppableId="drafts">
+      //       {
+      //         (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+      //           {
+      //             this.state.drafts.map((output, index) => {
+      //               return (<Draggable key={output.id} draggableId={output.id} index={index}>
+      //                 {
+      //                   (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+      //                     {output.Subject}
+      //                   </div>)
+      //                 }
+      //               </Draggable>)
+      //             })
+      //
+      //           }
+      //           {provided.placeholder}
+      //         </div>)
+      //       }
+      //     </Droppable>
+      //     {/* Unreads */}
+      //     <Droppable droppableId="unreads">
+      //       {
+      //         (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+      //           {
+      //             this.state.unreads.map((output, index) => {
+      //               return (<Draggable key={output.id} draggableId={output.id} index={index}>
+      //                 {
+      //                   (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+      //                     {output.Subject}
+      //                   </div>)
+      //                 }
+      //               </Draggable>)
+      //             })
+      //
+      //           }
+      //           {provided.placeholder}
+      //         </div>)
+      //       }
+      //     </Droppable>
+      //     <Droppable droppableId="droppable2">
+      //       {
+      //         (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+      //           {
+      //             this.state.selected.map((item, index) => (<Draggable key={item.id} draggableId={item.id} index={index}>
+      //               {
+      //                 (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+      //                   {item.content}
+      //                 </div>)
+      //               }
+      //             </Draggable>))
+      //           }
+      //           {provided.placeholder}
+      //         </div>)
+      //       }
+      //     </Droppable>
+      //   </DragDropContext>);
+      //
+      // } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
+      //   view = <div>Not Signed In<SignIn2/></div>
+      view = <Home/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {

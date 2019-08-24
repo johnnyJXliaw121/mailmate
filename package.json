@@ -10,6 +10,7 @@
     "btoa": "^1.2.1",
     "dnd": "^0.1.0",
     "firebase": "^6.4.0",
+    "materialize-css": "^1.0.0-rc.2",
     "react": "^16.9.0",
     "react-beautiful": "^2.1.1",
     "react-beautiful-dnd": "^11.0.5",
