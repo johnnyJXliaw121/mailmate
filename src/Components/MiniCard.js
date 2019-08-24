@@ -107,7 +107,7 @@ class MiniCard extends Component {
                                 }
                                 action={
                                     <IconButton aria-label="settings">
-                                        <DeleteIcon onClick={() => this.props.handleDeleteDraft(id)}/>
+                                        <DeleteIcon onClick={() => this.props.handleDelete(id, this.props.label)}/>
                                     </IconButton>
                                 }
                                 title={sender}

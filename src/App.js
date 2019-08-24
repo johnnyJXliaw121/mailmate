@@ -65,7 +65,7 @@ class App extends Component {
       sales: [],
       unreads: []
     };
-    this.handleDeleteDraft = this.handleDeleteDraft.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
   }
   componentWillMount() {
     let gapiInstance = gapi.auth2.getAuthInstance()
@@ -156,18 +156,23 @@ class App extends Component {
     }
   };
 
-  handleDeleteDraft (mail_id) {
-    let drafts = this.state.drafts.filter((item) => {
+  handleDelete (mail_id, label) {
+    let newMailArray = this.state[label].filter((item) => {
       return item.id != mail_id
     })
-    this.setState({drafts: drafts})
+    this.setState({[label]: newMailArray})
   }
-  
+
   render() {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} handleDeleteDraft={this.handleDeleteDraft}/>
+      view = <Home
+                drafts={this.state.drafts}
+                unreads={this.state.unreads}
+                sales={this.state.sales}
+                handleDelete={this.handleDelete}
+              />
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {

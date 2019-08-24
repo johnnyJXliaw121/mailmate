@@ -127,7 +127,8 @@ class Home extends Component {
                           sender={name}
                           subject={output.Subject}
                           snippet={output.Snippet}
-                          handleDeleteDraft={this.props.handleDeleteDraft}
+                          handleDelete={this.props.handleDelete}
+                          label="drafts"
                 />)
               })
             }
@@ -142,7 +143,15 @@ class Home extends Component {
             {
               this.props.unreads.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
+                return (<MiniCard
+                            id={output.id}
+                            index={index}
+                            sender={name}
+                            subject={output.Subject}
+                            snippet={output.Snippet}
+                            handleDelete={this.props.handleDelete}
+                            label="unreads"
+                />)
               })
             }
             {provided.placeholder}
@@ -156,7 +165,15 @@ class Home extends Component {
             {
               this.props.sales.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
+                return (<MiniCard
+                          id={output.id}
+                          index={index}
+                          sender={name}
+                          subject={output.Subject}
+                          snippet={output.Snippet}
+                          handleDelete={this.props.handleDelete}
+                          label="sales"
+                        />)
               })
             }
             {provided.placeholder}
