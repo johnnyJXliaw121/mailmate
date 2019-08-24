@@ -14,15 +14,13 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 // import {auth} from 'firebase/app'
 // import {getListOfLabels} from "./api/Labels";
 import {
-  // getIdsFromUnreadList,
-  // getListOfUnreadMails,
   sendEmail,
-  // getMailFromId,
-  // getEmailBodyFromEmailResponse,
-  // getSubjectFromEmailResponse,
-  // getSenderFromEmailResponse,
-  // getSnippetFromEmailResponse,
-  // getUnreadMailInfo
+  getIdsFromUnreadList,
+  getListOfUnreadMails,
+  getEmailById,
+  getEmailRawFromId,
+  getBodyFromEmailResponse,
+  getHeadersFromEmailResponse
 } from "./api/Email";
 import {
   // getDraftRawFromId,
@@ -34,9 +32,9 @@ import {
   // getDraftFromDraftResponse,
   getDraftById
 } from "./api/Draft"
-
 // import ReactDOM from 'react-dom';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+import { getListOfLabelData, getAllMailWithLabel, getLabelNamesFromLabelData, getAllMailIdWithlabel } from './api/Labels';
 
 var gapi = window.gapi
 
@@ -141,10 +139,13 @@ class App extends Component {
       items: getItems(10),
       selected: getItems(5, 10),
       isSignedIn: null,
+
       open: false,
       title:'',
       value: initialValue,
       textBox:'<p>Hello World</p>',
+      drafts: [],
+      unreads: []
 
     };
     // ================ Initializes Gapi Auth ====================
@@ -205,27 +206,50 @@ class App extends Component {
       console.log("Signed in = ", isSignedIn)
 
       // ==== GAPI API CALLS ======
-      var from = "MailMate <mailmate.aus@gmail.com>"
-      var to = "Johnny Liaw <johnnyliaw121@gmail.com>"
-      var subject = "Random Email"
-      var message = "hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!hello world world world!"
+      // ==== Unread Email Calls ==
+      let unreads = []
+      getListOfUnreadMails().then((output) => {
+        let ids = getIdsFromUnreadList(output)
 
-      getListOfDraftMails().then((response) => {
-        let ids = getIdsFromDraftList(response)
-        console.log(ids)
-        ids.forEach((id) => {
-          getDraftById(id).then((output) => console.log(output))
+        ids.forEach(id => {
+          getEmailById(id).then((output) => {
+            console.log('output', output);
+            unreads.push(output)
+            this.setState({unreads: unreads})
+          })
         })
       })
-    })
 
+      // ==== Draft Calls
+      let drafts = []
+      getListOfDraftMails().then((response) => {
+        let ids = getIdsFromDraftList(response)
+        ids.forEach((id) => {
+          getDraftById(id).then((output) => {
+            drafts.push(output)
+            this.setState({drafts: drafts})
+          })
+        })
+      })
+      
+      // ===== Label Calls ======
+      getListOfLabelData().then(labels=>{
+        console.log('List of label Data',labels)
+        console.log('label names',getLabelNamesFromLabelData(labels))
+        
+      })
+      
+      getAllMailIdWithlabel('INBOX').then(out =>{
+        console.log('getall mail with id',out)
+      })
+    })
   }
 
   /**
-     * A semi-generic way to handle multiple lists. Matches
-     * the IDs of the droppable container to the names of the
-     * source arrays stored in the state.
-     */
+   * A semi-generic way to handle multiple lists. Matches
+   * the IDs of the droppable container to the names of the
+   * source arrays stored in the state.
+   */
   id2List = {
     droppable: 'items',
     droppable2: 'selected'
@@ -282,7 +306,8 @@ class App extends Component {
       // ======= INSERT HOME BELOW =========
       // the view below is the layout for 1 row 3 column for design
       view = (<DragDropContext onDragEnd={this.onDragEnd}>
-        <Droppable droppableId="droppable">
+        {/* Drafts */}
+        <Droppable droppableId="drafts">
           {
             (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
               {

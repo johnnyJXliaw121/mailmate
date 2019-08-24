@@ -6,28 +6,6 @@ let gapi = window.gapi
 
 
 /**
- * rturns a list of unread email body, sender, subject and id in an object
- * @param unreads - raw output from getListOfUnreadMails
- * @returns {Array}
- */
-export let getUnreadMailInfo = (unreads) => {
-    let obj_list = []
-    let ids = getIdsFromUnreadList(unreads)
-    ids.map((id) => {
-        let obj = {}
-        obj["id"] = id
-        getMailFromId(id).then((response) => {
-            obj["snippet"] = getSnippetFromEmailResponse(response)
-            obj["body"] = getEmailBodyFromEmailResponse(response)
-            obj["subject"] = getSubjectFromEmailResponse(response)[0].value
-            obj["sender"] = getSenderFromEmailResponse(response)[0].value
-        })
-        obj_list.push(obj)
-    })
-    return obj_list
-}
-
-/**
  * Gets list of unread emails in the user's inbox
  * @returns {*}
  */
@@ -56,11 +34,86 @@ export let getIdsFromUnreadList = (response) => {
  * @param id - id of the email
  * @returns {*}
  */
-export let getMailFromId = (id) => {
+export let getEmailRawFromId = (id) => {
     return gapi.client.gmail.users.messages.get({
         'userId': 'me',
         'id': id,
         'format': 'full'
+    })
+}
+
+/**
+ * Gets the payload of a specific email
+ * @param payload - full email message data
+ * @returns {Array} - decoded body in JSON format
+ */
+const getJsonFromEmailResponse = (response) => {
+    const json = JSON.parse(response.body)
+    return {
+        payload: json.payload,
+        id: json.id,
+        date: response.result.internalDate
+    }
+}
+
+/**
+ * Gets the body content of a specific email
+ * @param response - raw output from getEmailRawFromId
+ * @returns {Array} - decoded body in string format
+ */
+export const getBodyFromEmailResponse = (response) => {
+    let encodedMsgArray = getJsonFromEmailResponse(response).payload.parts.map(obj=>{
+        return obj.body.data
+    })
+    return base64.decode(encodedMsgArray[0])
+}
+
+/**
+ * Gets the header content of a specific unread email
+ * @param response - raw output from getEmailRawFromId
+ * @returns {Array} - decoded body in string format
+ */
+export const getHeadersFromEmailResponse = (response) =>{
+    const headersArray = response.result.payload.headers
+    let headersObject = {}
+    headersArray.forEach((field)=>{
+        headersObject[field.name] = field.value
+    })
+    const newheadersObject = {
+        From : headersObject.From,
+        Date : headersObject.Date,
+        Subject : headersObject.Subject,
+        To: headersObject.To,
+        Snippet : response.result.snippet
+    }
+    return newheadersObject;
+}
+
+/**
+ * Gets the all relevant content of a specific draft email
+ * @param response - raw output from getEmailRawFromId
+ * @returns {Array} - decoded body in string format
+ */
+export const getEmailFromEmailResponse = (response) => {
+    const emailObject = {
+        ...getHeadersFromEmailResponse(response),
+        body: getBodyFromEmailResponse(response),
+        id:  getJsonFromEmailResponse(response)['id'],
+        dateUTC: getJsonFromEmailResponse(response)['date']
+    }
+    return emailObject
+}
+
+/**
+ * Gets the all relevant content of a specific draft email by id
+ * @param response - draft id
+ * @returns {Promise<Array>}- decoded body in string format
+ */
+export const getEmailById = (id) => {
+    return new Promise(function (resolve, reject) {
+        return getEmailRawFromId(id).then(draft => {
+            resolve(getEmailFromEmailResponse(draft))
+        })
     })
 }
 
@@ -88,49 +141,4 @@ export let sendEmail = (from, to, subject, message) => {
         }
     })
 }
-/**
- * Gets email body for an email id
- * @param response - output from getMailFromId
- */
-export let getEmailBodyFromEmailResponse = (response) => {
-    let encodedMsgArray = JSON.parse(response.body).payload.parts.map((obj) => {
-        return obj.body.data
-    })
-    let emailBody = base64.decode(encodedMsgArray[0])
-    return emailBody
-}
 
-/**
- * gets the subject from an email id
- * @param response - raw output from getMailFromId
- * @returns {*}
- */
-export let getSubjectFromEmailResponse = (response) => {
-    let headers = response.result.payload.headers
-    let subject = headers.filter((obj) => {
-        return obj.name == "Subject"
-    })
-    return subject
-}
-
-/**
- * Gets the sender information from an email id
- * @param response - raw output from getMailFromid
- * @returns {*}
- */
-export let getSenderFromEmailResponse = (response) => {
-    let headers = response.result.payload.headers
-    let sender = headers.filter((obj) => {
-        return obj.name == "From"
-    })
-    return sender
-}
-
-/**
- * Gets snippet from email id
- * @param response - raw output from an email ID
- * @returns {*}
- */
-export let getSnippetFromEmailResponse = (response) => {
-    return response.result.snippet
-}
