@@ -1,16 +1,14 @@
 import React, {Component} from 'react';
-// import SignIn from './Components/SignIn'
-import SignIn2 from './Components/SignIn2'
-// import base64url from 'base64url'
-// import {auth} from 'firebase/app'
-// import {getListOfLabels} from "./api/Labels";
+// import SignIn from './Components/SignIn
+import SignIn2 from './Components/SignIn2';
 import {
+  // sendEmail,
   getIdsFromUnreadList,
   getListOfUnreadMails,
   getEmailById,
-  getEmailRawFromId,
-  getBodyFromEmailResponse,
-  getHeadersFromEmailResponse
+  // getEmailRawFromId,
+  // getBodyFromEmailResponse,
+  // getHeadersFromEmailResponse
 } from "./api/Email";
 import {
   // getDraftRawFromId,
@@ -22,19 +20,15 @@ import {
   // getDraftFromDraftResponse,
   getDraftById
 } from "./api/Draft"
-// import ReactDOM from 'react-dom';
-import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
-import { getListOfLabelData, getAllMailWithLabel, getLabelNamesFromLabelData, getAllMailIdWithlabel } from './api/Labels';
+import Home from "./Components/Home";
+import {
+  getListOfLabelData,
+  // getAllMailWithLabel,
+  getLabelNamesFromLabelData,
+  getAllMailIdWithlabel
+} from './api/Labels';
 
 var gapi = window.gapi
-
-// fake data generator
-const getItems = (count, offset = 0) => Array.from({
-  length: count
-}, (v, k) => k).map(k => ({
-  id: `item-${k + offset}`,
-  content: `item ${k + offset}`
-}));
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -62,46 +56,17 @@ const move = (source, destination, droppableSource, droppableDestination) => {
   return result;
 };
 
-const grid = 8;
-
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // change background colour if dragging
-  background: isDragging
-    ? 'lightgreen'
-    : 'grey',
-
-  // styles we need to apply on draggables
-  ...draggableStyle
-});
-
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver
-    ? 'lightblue'
-    : 'lightgrey',
-  padding: grid,
-  width: 250
-});
-
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      items: getItems(10),
-      selected: getItems(5, 10),
       isSignedIn: null,
       drafts: [],
+      sales: [],
       unreads: []
+
     };
-    // ================ Initializes Gapi Auth ====================
-    // this.getListOfLabels = getListOfLabels().bind(this)
-
   }
-
   componentWillMount() {
     let gapiInstance = gapi.auth2.getAuthInstance()
     gapiInstance.then(
@@ -110,10 +75,6 @@ class App extends Component {
       //Check if it is signed in now!
       this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
       console.log("Initial GAPI State", this.state.isSignedIn)
-      let currentUser = gapiInstance.currentUser.get()
-      currentUser.reloadAuthResponse().then((resp) => {
-        console.log(resp)
-      })
     })
 
     // Set listener for future GAPI authentication state changes
@@ -129,7 +90,6 @@ class App extends Component {
 
         ids.forEach(id => {
           getEmailById(id).then((output) => {
-            console.log('output', output);
             unreads.push(output)
             this.setState({unreads: unreads})
           })
@@ -137,7 +97,7 @@ class App extends Component {
       })
 
       // ==== Draft Calls
-      let drafts = []
+      let drafts = [];
       getListOfDraftMails().then((response) => {
         let ids = getIdsFromDraftList(response)
         ids.forEach((id) => {
@@ -147,32 +107,26 @@ class App extends Component {
           })
         })
       })
-      
+
       // ===== Label Calls ======
-      getListOfLabelData().then(labels=>{
-        console.log('List of label Data',labels)
-        console.log('label names',getLabelNamesFromLabelData(labels))
-        
+      getListOfLabelData().then(labels => {
+        console.log('List of label Data', labels)
+        console.log('label names', getLabelNamesFromLabelData(labels))
       })
-      
-      getAllMailIdWithlabel('INBOX').then(out =>{
-        console.log('getall mail with id',out)
+
+      let sales = [];
+      getAllMailIdWithlabel('Label_6111354806179621733').then((response) => {
+        let ids = response
+        ids.forEach((id) => {
+          getEmailById(id).then((output) => {
+            sales.push(output)
+            this.setState({sales: sales})
+          })
+        })
       })
     }
     })
   }
-
-  /**
-   * A semi-generic way to handle multiple lists. Matches
-   * the IDs of the droppable container to the names of the
-   * source arrays stored in the state.
-   */
-  id2List = {
-    droppable: 'items',
-    droppable2: 'selected'
-  };
-
-  getList = id => this.state[this.id2List[id]];
 
   onDragEnd = result => {
     const {source, destination} = result;
@@ -203,72 +157,11 @@ class App extends Component {
     }
   };
 
-  // Normally you would want to split things out into separate components.
-  // But in this example everything is just done in one place for simplicity
   render() {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      // the view below is the layout for 1 row 3 column for design
-      view = (<DragDropContext onDragEnd={this.onDragEnd}>
-        {/* Drafts */}
-        <Droppable droppableId="drafts">
-          {
-            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-              {
-                this.state.drafts.map((output, index) => {
-                  return (<Draggable key={output.id} draggableId={output.id} index={index}>
-                    {
-                      (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                        {output.Subject}
-                      </div>)
-                    }
-                  </Draggable>)
-                })
-
-              }
-              {provided.placeholder}
-            </div>)
-          }
-        </Droppable>
-        {/* Unreads */}
-        <Droppable droppableId="unreads">
-          {
-            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-              {
-                this.state.unreads.map((output, index) => {
-                  return (<Draggable key={output.id} draggableId={output.id} index={index}>
-                    {
-                      (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                        {output.Subject}
-                      </div>)
-                    }
-                  </Draggable>)
-                })
-
-              }
-              {provided.placeholder}
-            </div>)
-          }
-        </Droppable>
-        <Droppable droppableId="droppable2">
-          {
-            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-              {
-                this.state.selected.map((item, index) => (<Draggable key={item.id} draggableId={item.id} index={index}>
-                  {
-                    (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                      {item.content}
-                    </div>)
-                  }
-                </Draggable>))
-              }
-              {provided.placeholder}
-            </div>)
-          }
-        </Droppable>
-      </DragDropContext>);
-
+      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales}/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
@@ -276,7 +169,9 @@ class App extends Component {
         Pending Authentication Update
       </div>
     }
+
     return (view);
+
   }
 }
 

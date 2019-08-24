@@ -15,7 +15,7 @@ export let getLabelNamesFromLabelData = (labelData) => {
 /**
  * Returns an array of objects with Label_Name and associated Label_ID
  * @returns {Promise<labelData>}[{id: xxxxx, name: xxxxx}, ..., ...]
- */ 
+ */
 export let getListOfLabelData = () => {
     const listPromise = new Promise(function(resolve,reject){
         getListOfLabelsRaw().then((response) => {
