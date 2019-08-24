@@ -103,13 +103,29 @@ class Home extends Component {
   // But in this example everything is just done in one place for simplicity
   render() {
     return (<DragDropContext onDragEnd={this.onDragEnd}>
-      <Droppable droppableId="droppable">
+      {/* Drafts */}
+      <Droppable droppableId="drafts">
         {
           (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
             {
               this.props.drafts.map((output, index) => {
                 console.log('output', output);
                 let name = output.To.substring(0, output.To.indexOf("<"));
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
+              })
+            }
+            {provided.placeholder}
+          </div>)
+        }
+      </Droppable>
+      {/* Unreads */}
+      <Droppable droppableId="unreads">
+        {
+          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+            {
+              this.props.unreads.map((output, index) => {
+                console.log('output', output);
+                let name = output.From.substring(0, output.From.indexOf("<"));
                 return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet}/>)
               })
             }
