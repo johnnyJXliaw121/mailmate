@@ -51,7 +51,10 @@ const getListStyle = isDraggingOver => ({
 class Home extends Component {
   state = {
     items: getItems(10),
-    selected: getItems(5, 10)
+    selected: getItems(5, 10),
+    open: false,
+    title: '',
+    textBox: '<p>Hello World</p>'
   };
 
   /**
