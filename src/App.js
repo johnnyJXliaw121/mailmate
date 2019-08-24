@@ -148,40 +148,6 @@ class App extends Component {
           })
         })
       })
-      // if (isSignedIn) {
-      //   getListOfUnreadMails().then((unreads) => {
-      //     this.setState({unreads: getUnreadMailInfo(unreads)})
-      //   })
-      //    getListOfDraftMails().then((response) => {
-      //      let ids = getIdsFromDraftList(response)
-      //      console.log(ids)
-      //      ids.forEach((id) => {
-      //
-      //      getDraftFromId(id).then((draft) => {
-      //        console.log(draft)
-      //        console.log(getTextFromDraftMail(draft))
-      //      })
-      //      })
-      //    })
-      //
-      //    createDraftMail(from, to, subject, message).then(()=>{
-      //      console.log("success!")
-      //    })
-      //
-      //   console.log("==== LABEL DATA =====")
-      //   this.setState({label: getListOfLabelData()})
-      //
-      //   console.log("==== Retrieving Mail With Label ====")
-      //   console.log(getAllMailIdWithlabel("Label_6111354806179621733"))
-      //
-      //    console.log("=== assigning label to mail ===")
-      //    assignLabelToMail(["Label_6111354806179621733"],"16ca369a11d9abe0").then((response) => {
-      //      console.log("mail assignment success!")
-      //    })
-      //
-      //    createNewLabel("QUEUE").then((response) => {
-      //      console.log("QUEUE label created")
-      // })
 
       // ==== Draft Calls
       let drafts = [];
@@ -307,7 +273,7 @@ class App extends Component {
       //
       // } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       //   view = <div>Not Signed In<SignIn2/></div>
-      view = <Home/>
+      view = <Home drafts={this.state.drafts} unreads={this.state.unreads}/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {

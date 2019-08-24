@@ -32,15 +32,15 @@ class MiniCard extends Component {
     }
     render () {
         const index = this.props.index
-        const item = this.props.item
+        const id = this.props.id
         const sender = this.props.sender
         const subject = this.props.subject
         const snippet = this.props.snippet
         // console.log(item)
         return (
             <Draggable
-                key={item.id}
-                draggableId={item.id}
+                key={id}
+                draggableId={id}
                 index={index}>
                 {(provided, snapshot) => (
                     <div
