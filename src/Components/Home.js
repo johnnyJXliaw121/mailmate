@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Card from './Card'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import MiniCard from './MiniCard'
 
 // fake data generator
 const getItems = (count, offset = 0) =>
@@ -38,18 +39,7 @@ const move = (source, destination, droppableSource, droppableDestination) => {
 
 const grid = 8;
 
-const getItemStyle = (isDragging, draggableStyle) => ({
-    // some basic styles to make the items look a bit nicer
-    userSelect: 'none',
-    padding: grid * 2,
-    margin: `0 0 ${grid}px 0`,
 
-    // change background colour if dragging
-    background: isDragging ? 'lightgreen' : 'grey',
-
-    // styles we need to apply on draggables
-    ...draggableStyle
-});
 
 const getListStyle = isDraggingOver => ({
     background: isDraggingOver ? 'lightblue' : 'lightgrey',
@@ -128,24 +118,13 @@ class Home extends Component {
                             ref={provided.innerRef}
                             style={getListStyle(snapshot.isDraggingOver)}>
                             {this.state.items.map((item, index) => (
-                                <Draggable
-                                    key={item.id}
-                                    draggableId={item.id}
-                                    index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            onClick={this.handleClick}
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            style={getItemStyle(
-                                                snapshot.isDragging,
-                                                provided.draggableProps.style
-                                            )}>
-                                            <Card/>
-                                        </div>
-                                    )}
-                                </Draggable>
+                                <MiniCard
+                                    item={item}
+                                    index={index}
+                                    sender="Gumtree Australia"
+                                    subject="This is my first email"
+                                    snippet="This is a random piece of txt they started rationing food im very asad crystal wanted this text so i m like okay lets do it im writing this text im writing it right now"
+                                />
                             ))}
                             {provided.placeholder}
                         </div>
@@ -157,25 +136,8 @@ class Home extends Component {
                             ref={provided.innerRef}
                             style={getListStyle(snapshot.isDraggingOver)}>
                             {this.state.selected.map((item, index) => (
-                                <Draggable
-                                    key={item.id}
-                                    draggableId={item.id}
-                                    index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            style={getItemStyle(
-                                                snapshot.isDragging,
-                                                provided.draggableProps.style
-                                            )}>
-                                            {item.content}
-                                        </div>
-                                    )}
-                                </Draggable>
+                                <MiniCard item={item} index={index}/>
                             ))}
-                            {provided.placeholder}
                         </div>
                     )}
                 </Droppable>
