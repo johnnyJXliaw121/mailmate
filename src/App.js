@@ -244,7 +244,8 @@ class App extends Component {
     if (this.state.isSignedIn == true){
       // ======= INSERT HOME BELOW =========
       // the view below is the layout for 1 row 3 column for design
-      view = <Board data={data} draggable />
+      view = <Board   style={{background: "linear-gradient(90deg, #77c9d4, #57bc90)"}}  // Style of BoardWrapper
+      data={data} draggable />
 
       
     }
@@ -254,7 +255,7 @@ class App extends Component {
       view = <div> Pending Authentication Update </div>
     }
     return (
-        <div className="App" style={{height:'50em',background: "linear-gradient(90deg, #77c9d4, #57bc90)"}}>
+        <div className="App" >
           {view}
         </div>
     )
