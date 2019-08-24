@@ -50,7 +50,7 @@ export let getEmailRawFromId = (id) => {
 const getJsonFromEmailResponse = (response) => {
     const json = JSON.parse(response.body)
     return {
-        payload: json.payload, 
+        payload: json.payload,
         id: json.id,
         date: response.result.internalDate
     }
@@ -80,11 +80,11 @@ export const getHeadersFromEmailResponse = (response) =>{
         headersObject[field.name] = field.value
     })
     const newheadersObject = {
-        from : headersObject.From,
-        date : headersObject.Date,
-        subject : headersObject.Subject,
-        to: headersObject.To,
-        snippet : response.result.snippet
+        From : headersObject.From,
+        Date : headersObject.Date,
+        Subject : headersObject.Subject,
+        To: headersObject.To,
+        Snippet : response.result.snippet
     }
     return newheadersObject;
 }
@@ -96,7 +96,7 @@ export const getHeadersFromEmailResponse = (response) =>{
  */
 export const getEmailFromEmailResponse = (response) => {
     const emailObject = {
-        ... getHeadersFromEmailResponse(response),
+        ...getHeadersFromEmailResponse(response),
         body: getBodyFromEmailResponse(response),
         id:  getJsonFromEmailResponse(response)['id'],
         dateUTC: getJsonFromEmailResponse(response)['date']

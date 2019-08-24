@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 // import SignIn from './Components/SignIn'
 import SignIn2 from './Components/SignIn2'
 // import base64url from 'base64url'
@@ -10,8 +10,7 @@ import {
   getEmailById,
   getEmailRawFromId,
   getBodyFromEmailResponse,
-  getHeadersFromEmailResponse,
-
+  getHeadersFromEmailResponse
 } from "./api/Email";
 import {
   // getDraftRawFromId,
@@ -25,7 +24,7 @@ import {
 } from "./api/Draft"
 
 // import ReactDOM from 'react-dom';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 
 var gapi = window.gapi
 
@@ -95,7 +94,8 @@ class App extends Component {
       items: getItems(10),
       selected: getItems(5, 10),
       isSignedIn: null,
-      drafts: []
+      drafts: [],
+      unreads: []
     };
     // ================ Initializes Gapi Auth ====================
     // this.getListOfLabels = getListOfLabels().bind(this)
@@ -105,145 +105,168 @@ class App extends Component {
   componentWillMount() {
     let gapiInstance = gapi.auth2.getAuthInstance()
     gapiInstance.then(
-      //On Init Function
-      () => {
-        //Check if it is signed in now!
-        this.setState({ isSignedIn: gapiInstance.isSignedIn.get() })
-        console.log("Initial GAPI State", this.state.isSignedIn)
-        let currentUser = gapiInstance.currentUser.get()
-        currentUser.reloadAuthResponse().then((resp) => {
-          console.log(resp)
-        })
+    //On Init Function
+    () => {
+      //Check if it is signed in now!
+      this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
+      console.log("Initial GAPI State", this.state.isSignedIn)
+      let currentUser = gapiInstance.currentUser.get()
+      currentUser.reloadAuthResponse().then((resp) => {
+        console.log(resp)
       })
+    })
 
     // Set listener for future GAPI authentication state changes
     gapiInstance.isSignedIn.listen((isSignedIn) => {
-      this.setState({ isSignedIn: isSignedIn })
+      this.setState({isSignedIn: isSignedIn})
       console.log("Signed in = ", isSignedIn)
 
       // ==== GAPI API CALLS ======
       // ==== Unread Email Calls ==
-      getListOfUnreadMails().then((unreads) => {
-        let ids = getIdsFromUnreadList(unreads)
+      let unreads = []
+      getListOfUnreadMails().then((output) => {
+        let ids = getIdsFromUnreadList(output)
+
         ids.forEach(id => {
           getEmailById(id).then((output) => {
-            console.log('id', id)
-            console.log(output)
+            console.log('output', output);
+            unreads.push(output)
+            this.setState({unreads: unreads})
           })
         })
       })
-    
-    // ==== Draft Calls
-    let drafts = []
-    getListOfDraftMails().then((response) => {
-      let ids = getIdsFromDraftList(response)
 
-      ids.forEach((id) => {
-        getDraftById(id).then((output) => {
-          drafts.push(output)
-          this.setState({ drafts: drafts })
+      // ==== Draft Calls
+      let drafts = []
+      getListOfDraftMails().then((response) => {
+        let ids = getIdsFromDraftList(response)
+
+        ids.forEach((id) => {
+          getDraftById(id).then((output) => {
+            drafts.push(output)
+            this.setState({drafts: drafts})
+          })
         })
       })
     })
-  })
-}
+  }
 
-/**
+  /**
    * A semi-generic way to handle multiple lists. Matches
    * the IDs of the droppable container to the names of the
    * source arrays stored in the state.
    */
-id2List = {
-  droppable: 'items',
-  droppable2: 'selected'
-};
+  id2List = {
+    droppable: 'items',
+    droppable2: 'selected'
+  };
 
-getList = id => this.state[this.id2List[id]];
+  getList = id => this.state[this.id2List[id]];
 
-onDragEnd = result => {
-  const { source, destination } = result;
+  onDragEnd = result => {
+    const {source, destination} = result;
 
-  // dropped outside the list
-  if (!destination) {
-    return;
-  }
-
-  if (source.droppableId === destination.droppableId) {
-    const items = reorder(this.getList(source.droppableId), source.index, destination.index);
-
-    let state = {
-      items
-    };
-
-    if (source.droppableId === 'droppable2') {
-      state = {
-        selected: items
-      };
+    // dropped outside the list
+    if (!destination) {
+      return;
     }
 
-    this.setState(state);
-  } else {
-    const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
+    if (source.droppableId === destination.droppableId) {
+      const items = reorder(this.getList(source.droppableId), source.index, destination.index);
 
-    this.setState({ items: result.droppable, selected: result.droppable2 });
-  }
-};
+      let state = {
+        items
+      };
 
-// Normally you would want to split things out into separate components.
-// But in this example everything is just done in one place for simplicity
-render() {
-  let view = <div></div>
-  if (this.state.isSignedIn === true) {
-    // ======= INSERT HOME BELOW =========
-    // the view below is the layout for 1 row 3 column for design
-    console.log('this.state.drafts', this.state.drafts);
-    view = (<DragDropContext onDragEnd={this.onDragEnd}>
-      <Droppable droppableId="droppable">
-        {
-          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-            {
-              this.state.drafts.map((output, index) => {
-                return (<Draggable key={output.id} draggableId={output.id} index={index}>
+      if (source.droppableId === 'droppable2') {
+        state = {
+          selected: items
+        };
+      }
+
+      this.setState(state);
+    } else {
+      const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
+
+      this.setState({items: result.droppable, selected: result.droppable2});
+    }
+  };
+
+  // Normally you would want to split things out into separate components.
+  // But in this example everything is just done in one place for simplicity
+  render() {
+    let view = <div></div>
+    if (this.state.isSignedIn === true) {
+      // ======= INSERT HOME BELOW =========
+      // the view below is the layout for 1 row 3 column for design
+      view = (<DragDropContext onDragEnd={this.onDragEnd}>
+        {/* Drafts */}
+        <Droppable droppableId="drafts">
+          {
+            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+              {
+                this.state.drafts.map((output, index) => {
+                  return (<Draggable key={output.id} draggableId={output.id} index={index}>
+                    {
+                      (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+                        {output.Subject}
+                      </div>)
+                    }
+                  </Draggable>)
+                })
+
+              }
+              {provided.placeholder}
+            </div>)
+          }
+        </Droppable>
+        {/* Unreads */}
+        <Droppable droppableId="unreads">
+          {
+            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+              {
+                this.state.unreads.map((output, index) => {
+                  return (<Draggable key={output.id} draggableId={output.id} index={index}>
+                    {
+                      (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+                        {output.Subject}
+                      </div>)
+                    }
+                  </Draggable>)
+                })
+
+              }
+              {provided.placeholder}
+            </div>)
+          }
+        </Droppable>
+        <Droppable droppableId="droppable2">
+          {
+            (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+              {
+                this.state.selected.map((item, index) => (<Draggable key={item.id} draggableId={item.id} index={index}>
                   {
                     (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                      {output.Subject}
+                      {item.content}
                     </div>)
                   }
-                </Draggable>)
-              })
+                </Draggable>))
+              }
+              {provided.placeholder}
+            </div>)
+          }
+        </Droppable>
+      </DragDropContext>);
 
-            }
-            {provided.placeholder}
-          </div>)
-        }
-      </Droppable>
-      <Droppable droppableId="droppable2">
-        {
-          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
-            {
-              this.state.selected.map((item, index) => (<Draggable key={item.id} draggableId={item.id} index={index}>
-                {
-                  (provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                    {item.content}
-                  </div>)
-                }
-              </Draggable>))
-            }
-            {provided.placeholder}
-          </div>)
-        }
-      </Droppable>
-    </DragDropContext>);
-
-  } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
-    view = <div>Not Signed In<SignIn2 /></div>
-  } else {
-    view = <div>
-      Pending Authentication Update
+    } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
+      view = <div>Not Signed In<SignIn2/></div>
+    } else {
+      view = <div>
+        Pending Authentication Update
       </div>
+    }
+    return (view);
   }
-  return (view);
-}
 }
 
 // Put the things into the DOM!
