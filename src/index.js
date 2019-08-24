@@ -24,7 +24,9 @@ gapi.load('client:auth2', () => {
     discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"],
     scope: "https://mail.google.com/"
   })
-  ReactDOM.render(<App firebase={firebase} />, document.getElementById('root'))
+  gapi.client.load('gmail','v1',() => {
+    ReactDOM.render(<App firebase={firebase} />, document.getElementById('root'))
+  })
 })
 
 
