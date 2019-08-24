@@ -31,13 +31,6 @@ import {
 var gapi = window.gapi
 
 // a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
 
 /**
  * Moves an item from one list to another list.
@@ -66,7 +59,17 @@ class App extends Component {
       unreads: []
     };
     this.handleDelete = this.handleDelete.bind(this)
+    this.reorder = this.reorder.bind(this)
   }
+
+  reorder(id, startIndex, endIndex) {
+    let list = this.state[id]
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    this.setState({[id]: result})
+  };
+
   componentWillMount() {
     let gapiInstance = gapi.auth2.getAuthInstance()
     gapiInstance.then(
@@ -81,82 +84,83 @@ class App extends Component {
     gapiInstance.isSignedIn.listen((isSignedIn) => {
       this.setState({isSignedIn: isSignedIn})
       console.log("Signed in = ", isSignedIn)
+      if (isSignedIn) {
+        // ==== GAPI API CALLS ======
+        // ==== Unread Email Calls ==
+        let unreads = []
+        getListOfUnreadMails().then((output) => {
+          let ids = getIdsFromUnreadList(output)
 
-      // ==== GAPI API CALLS ======
-      // ==== Unread Email Calls ==
-      let unreads = []
-      getListOfUnreadMails().then((output) => {
-        let ids = getIdsFromUnreadList(output)
-
-        ids.forEach(id => {
-          getEmailById(id).then((output) => {
-            unreads.push(output)
-            this.setState({unreads: unreads})
+          ids.forEach(id => {
+            getEmailById(id).then((output) => {
+              unreads.push(output)
+              this.setState({unreads: unreads})
+            })
           })
         })
-      })
 
-      // ==== Draft Calls
-      let drafts = [];
-      getListOfDraftMails().then((response) => {
-        let ids = getIdsFromDraftList(response)
-        ids.forEach((id) => {
-          getDraftById(id).then((output) => {
-            drafts.push(output)
-            this.setState({drafts: drafts})
+        // ==== Draft Calls
+        let drafts = [];
+        getListOfDraftMails().then((response) => {
+          let ids = getIdsFromDraftList(response)
+          ids.forEach((id) => {
+            getDraftById(id).then((output) => {
+              drafts.push(output)
+              this.setState({drafts: drafts})
+            })
           })
         })
-      })
 
-      // ===== Label Calls ======
-      getListOfLabelData().then(labels => {
-        console.log('List of label Data', labels)
-        console.log('label names', getLabelNamesFromLabelData(labels))
-      })
+        // ===== Label Calls ======
+        getListOfLabelData().then(labels => {
+          console.log('List of label Data', labels)
+          console.log('label names', getLabelNamesFromLabelData(labels))
+        })
 
-      let sales = [];
-      getAllMailIdWithlabel('Label_6111354806179621733').then((response) => {
-        let ids = response
-        ids.forEach((id) => {
-          getEmailById(id).then((output) => {
-            sales.push(output)
-            this.setState({sales: sales})
+        let sales = [];
+        getAllMailIdWithlabel('Label_6111354806179621733').then((response) => {
+          let ids = response
+          ids.forEach((id) => {
+            getEmailById(id).then((output) => {
+              sales.push(output)
+              this.setState({sales: sales})
+            })
           })
         })
-      })
+      }
     })
   }
 
-  onDragEnd = result => {
-    const {source, destination} = result;
+  // onDragEnd = result => {
+  //   const {source, destination} = result;
+  //
+  //    dropped outside the list
+  //   if (!destination) {
+  //     return;
+  //   }
+  //
+  //   if (source.droppableId === destination.droppableId) {
+  //     const items = this.reorder(this.getList(source.droppableId), source.index, destination.index);
+  //
+  //     let state = {
+  //       items
+  //     };
+  //
+  //     if (source.droppableId === 'droppable2') {
+  //       state = {
+  //         selected: items
+  //       };
+  //     }
+  //
+  //     this.setState(state);
+  //   } else {
+  //     const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
+  //
+  //     this.setState({items: result.droppable, selected: result.droppable2});
+  //   }
+  // };
 
-    // dropped outside the list
-    if (!destination) {
-      return;
-    }
-
-    if (source.droppableId === destination.droppableId) {
-      const items = reorder(this.getList(source.droppableId), source.index, destination.index);
-
-      let state = {
-        items
-      };
-
-      if (source.droppableId === 'droppable2') {
-        state = {
-          selected: items
-        };
-      }
-
-      this.setState(state);
-    } else {
-      const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
-
-      this.setState({items: result.droppable, selected: result.droppable2});
-    }
-  };
-
-  handleDelete (mail_id, label) {
+  handleDelete(mail_id, label) {
     let newMailArray = this.state[label].filter((item) => {
       return item.id != mail_id
     })
@@ -167,12 +171,7 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <Home
-                drafts={this.state.drafts}
-                unreads={this.state.unreads}
-                sales={this.state.sales}
-                handleDelete={this.handleDelete}
-              />
+      view = <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} handleDelete={this.handleDelete} reorder={this.reorder}/>
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {

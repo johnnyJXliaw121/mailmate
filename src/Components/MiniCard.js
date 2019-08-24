@@ -22,6 +22,7 @@ import {Value} from 'slate';
 import CKEditor from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {sendEmail} from "../api/Email";
+import { Input } from 'react-nice-inputs';
 
 // this is for the modal
 const initialValue = Value.fromJSON({
@@ -67,22 +68,41 @@ CustomCardContent = withStyles(CustomCardContentStyle)(CustomCardContent);
 
 class MiniCard extends Component {
   constructor(props) {
-      super(props)
-      this.state = {
-          value: initialValue
-      }
+    super(props)
+    this.state = {
+      value: initialValue,
+      textValue:'',
+    }
+    this.handleChange = this.handleChange.bind(this);
+
   }
-    onOpenModal = (titleReceived) => {
-        this.setState({open: true, title: titleReceived});
-    };
 
     onCloseModal = () => {
         this.setState({open: false});
     };
 
+  onOpenModal = (titleReceived,bodyReceived) => {
+    this.setState({
+        open: true,
+        title: titleReceived,
+        body: bodyReceived
+    });
+  };
+
     onChange = ({value}) => {
         this.setState({value})
     }
+
+    handleChange(event) {
+        console.log(event.target.value);
+      this.setState({textValue: event.target.value});
+    }
+
+    onSendEmail = (from,to,subject,message) => {
+      sendEmail(from, to, subject, message).then((resp) => console.log("email sent"))
+      this.setState({open: false});
+
+  }
 
     render() {
         const index = this.props.index
@@ -92,82 +112,187 @@ class MiniCard extends Component {
         const snippet = this.props.snippet
 
         const letter = sender ? sender.charAt(0) : 'X'
-        return (<div>
-            <Draggable key={id} draggableId={id} index={index}>
-                {
-                    (provided, snapshot) => (
-                        <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
-                        <Card style={{backgroundColor: '#white',
-                            borderLeft: '5px solid #74B5FF'}}>
-                            <CardHeader
-                                avatar={
-                                    <Avatar aria-label="recipe">
-                                        {letter}
-                                    </Avatar>
-                                }
-                                action={
-                                    <IconButton aria-label="settings">
-                                        <DeleteIcon onClick={() => this.props.handleDelete(id, this.props.label)}/>
-                                    </IconButton>
-                                }
-                                title={sender}
 
-                            />
-                            <CardContent style={{paddingTop: '-50px'}}>
-                                <Typography>
-                                    <Box style={{
-                                        fontFamily: 'Montserrat, sans-serif',
-                                        paddingBottom: '5px'}}>{subject}</Box>
-                                </Typography>
-                                <Typography style={{marginBottom: '-10px'}}>
-                                    <Box style={{fontFamily: 'Montserrat',
-                                        fontSize: '12px',
-                                        color: 'black',
-                                        fontWeight: '50',
-                                        paddingTop: '8px',
-                                        opacity: '0.5'}}>
-                                        {snippet}
-                                        onClick={() => this.onOpenModal("item.id")}
-                                    </Box>
-                                </Typography>
 
-                            </CardContent>
-                        </Card>
-                    </div>)
-                }
-            </Draggable>
-            <Modal open={this.state.open} onClose={this.onCloseModal} center="center">
-                <form style={{
-                    width: '50em',
-                    height: '30em'
-                }}>
-                    <h1>Title</h1>
-                    <p>{this.state.title}</p>
-                    <h1>Body</h1>
+                                                // onClick={() => this.onOpenModal("item.id")}
 
-                    <CKEditor editor={ClassicEditor} data={this.state.textBox} onInit={editor => {
-                        // You can store the "editor" and use when it is needed.
-                        console.log('Editor is ready to use!', editor);
-                    }} onChange={(event, editor) => {
-                        const data = editor.getData();
-                        console.log({event, editor, data});
-                        this.setState({textBox: data});
 
-                    }} onBlur={editor => {
-                        console.log('Blur.', editor);
-                    }} onFocus={editor => {
-                        console.log('Focus.', editor);
-                    }}/>
-                    <div style={{
-                        textAlign: 'center',
-                        marginTop: '10em'
-                    }} onClick={() => sendEmail("MailMate <mailmate.aus@gmail.com>", "MailMate <mailmate.aus@gmail.com>", "test", "hello test message").then((resp) => console.log("email sent"))}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                    </div>
-                </form>
-            </Modal>
-        </div>)
-    }
+//         return (<div>
+//             <Draggable key={id} draggableId={id} index={index}>
+//                 {
+//                     (provided, snapshot) => (
+//                         <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+//                         <Card style={{backgroundColor: '#white',
+//                             borderLeft: '5px solid #74B5FF'}}>
+//                             <CardHeader
+//                                 avatar={
+//                                     <Avatar aria-label="recipe">
+//                                         {letter}
+//                                     </Avatar>
+//                                 }
+//                                 action={
+//                                     <IconButton aria-label="settings">
+//                                         <DeleteIcon onClick={() => this.props.handleDelete(id, this.props.label)}/>
+//                                     </IconButton>
+//                                 }
+//                                 title={sender}
+//
+//                             />
+//                             <CardContent style={{paddingTop: '-50px'}}>
+//                                 <Typography>
+//                                     <Box style={{
+//                                         fontFamily: 'Montserrat, sans-serif',
+//                                         paddingBottom: '5px'}}>{subject}</Box>
+//                                 </Typography>
+//                                 <Typography style={{marginBottom: '-10px'}}>
+//                                     <Box style={{fontFamily: 'Montserrat',
+//                                         fontSize: '12px',
+//                                         color: 'black',
+//                                         fontWeight: '50',
+//                                         paddingTop: '8px',
+//                                         opacity: '0.5'}}>
+//                                         {snippet}
+//                                         onClick={() => this.onOpenModal("item.id")}
+//                                     </Box>
+//                                 </Typography>
+//
+
+//                             </CardContent>
+//                         </Card>
+//                     </div>)
+//                 }
+//             </Draggable>
+//             <Modal open={this.state.open} onClose={this.onCloseModal} center="center">
+//                 <form style={{
+//                     width: '50em',
+//                     height: '30em'
+//                 }}>
+//                     <h1>Title</h1>
+//                     <p>{this.state.title}</p>
+//                     <h1>Body</h1>
+//
+//                     <CKEditor editor={ClassicEditor} data={this.state.textBox} onInit={editor => {
+//                         // You can store the "editor" and use when it is needed.
+//                         console.log('Editor is ready to use!', editor);
+//                     }} onChange={(event, editor) => {
+//                         const data = editor.getData();
+//                         console.log({event, editor, data});
+//                         this.setState({textBox: data});
+//
+//                     }} onBlur={editor => {
+//                         console.log('Blur.', editor);
+//                     }} onFocus={editor => {
+//                         console.log('Focus.', editor);
+//                     }}/>
+//                     <div style={{
+//                         textAlign: 'center',
+//                         marginTop: '10em'
+//                     }} onClick={() => sendEmail("MailMate <mailmate.aus@gmail.com>", "MailMate <mailmate.aus@gmail.com>", "test", "hello test message").then((resp) => console.log("email sent"))}>
+//                         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+//                     </div>
+//                 </form>
+//             </Modal>
+//         </div>)
+//     }
+// =======
+
+
+  render() {
+    const index = this.props.index
+    const id = this.props.id
+    const sender = this.props.sender
+    const subject = this.props.subject
+    const snippet = this.props.snippet
+    const body = this.props.body
+    const emailNameToSend = this.props.emailName
+    return (<div>
+      <Draggable key={id} draggableId={id} index={index}>
+        {
+          (provided, snapshot) => (
+          <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+          <Card style={{backgroundColor: '#white',
+                          borderLeft: '5px solid #74B5FF'}}>
+                          <CardHeader
+                              avatar={
+                                  <Avatar aria-label="recipe">
+                                      {letter}
+                                  </Avatar>
+                              }
+                              action={
+                                  <IconButton aria-label="settings">
+                                      <DeleteIcon onClick={() => this.props.handleDelete(id, this.props.label)}/>
+                                  </IconButton>
+                              }
+                              title={sender}
+
+                          />
+              <CardContent >
+                <Typography style={{marginTop: '-5px'}}>
+                <span style={{color: '#74b5ff',
+                                fontFamily: 'Montserrat, sans-serif',
+                                fontSize: '20px',
+                                fontWeight: '600'}}>{sender}</span>
+                </Typography>
+                <Typography >
+                <Box style={{
+                    fontFamily: 'Montserrat, sans-serif',
+                    paddingBottom: '5px'}}>{subject}</Box>
+                </Typography>
+                <Typography style={{marginBottom: '-10px'}}>
+                <Box style={{fontFamily: 'Montserrat',
+                    fontSize: '12px',
+                    color: 'black',
+
+                    fontWeight: '50',
+                    paddingTop: '8px',
+                    opacity: '0.5',
+                    borderTop: '1px solid #ccc'}} onClick={() => this.onOpenModal(subject,body)}>{snippet}</Box>
+                </Typography>
+
+              </CardContent>
+            </Card>
+          </div>)
+        }
+      </Draggable>
+      <Modal open={this.state.open} onClose={this.onCloseModal} center="center">
+        <form style={{
+            maxWidth: '50em',
+            height: '30em',
+            overflow:'hidden',
+            overflowY:'auto'
+          }}>
+          <h1 style={{textAlign:'center',fontSize:'40px'}}>{this.state.title}</h1>
+          <h2 >Message From {sender}</h2>
+          <p>{this.state.body}</p>
+          <h2>Send your Email Below</h2>
+          <div style={{display:'flex'}}>
+          <h3 style={{marginRight:'2%'}}> Subject </h3>
+
+
+          <input style={{height:'3em',marginTop:'2px'}} value={this.state.textValue} onChange={this.handleChange}></input>
+          </div>
+          <CKEditor editor={ClassicEditor} data={this.state.textBox} onInit={editor => {
+              // You can store the "editor" and use when it is needed.
+              console.log('Editor is ready to use!', editor);
+            }} onChange={(event, editor) => {
+              const data = editor.getData();
+              console.log({event, editor, data});
+              this.setState({textBox: data});
+
+            }} onBlur={editor => {
+              console.log('Blur.', editor);
+            }} onFocus={editor => {
+              console.log('Focus.', editor);
+            }}/>
+          <div style={{
+              textAlign: 'center',
+              marginTop: '2em'
+            }} onClick={()=>this.onSendEmail('MailMate <mail.mate@gmail.com',emailNameToSend,this.state.textValue,this.state.textBox)}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </div>
+        </form>
+      </Modal>
+    </div>)
   }
 
 

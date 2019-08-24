@@ -4,8 +4,6 @@ import Card from './Card'
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import MiniCard from './MiniCard'
 
-// const mailData = [{}]
-
 // fake data generator
 const getItems = (count, offset = 0) => Array.from({
   length: count
@@ -14,19 +12,10 @@ const getItems = (count, offset = 0) => Array.from({
   content: `item ${k + offset}`
 }));
 
-// a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
 /**
  * Moves an item from one list to another list.
  */
-const move = (source, destination, droppableSource, droppableDestination) => {
+function move(source, destination, droppableSource, droppableDestination) {
   const sourceClone = Array.from(source);
   const destClone = Array.from(destination);
   const [removed] = sourceClone.splice(droppableSource.index, 1);
@@ -51,27 +40,19 @@ const getListStyle = isDraggingOver => ({
 });
 
 class Home extends Component {
-  state = {
-    items: getItems(10),
-    selected: getItems(5, 10),
-    open: false,
-    title: '',
-    textBox: '<p>Hello World</p>'
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      items: getItems(10),
+      selected: getItems(5, 10),
+      open: false,
+      title: '',
+      textBox: '<p>Hello World</p>'
+    };
+    this.onDragEnd = this.onDragEnd.bind(this)
+  }
 
-  /**
-     * A semi-generic way to handle multiple lists. Matches
-     * the IDs of the droppable container to the names of the
-     * source arrays stored in the state.
-     */
-  id2List = {
-    droppable: 'items',
-    droppable2: 'selected'
-  };
-
-  getList = id => this.state[this.id2List[id]];
-
-  onDragEnd = result => {
+  onDragEnd(result) {
     const {source, destination} = result;
 
     // dropped outside the list
@@ -79,36 +60,15 @@ class Home extends Component {
       return;
     }
 
+    // reorder inside
     if (source.droppableId === destination.droppableId) {
-      const items = reorder(this.getList(source.droppableId), source.index, destination.index);
-
-      let state = {
-        items
-      };
-
-      if (source.droppableId === 'droppable2') {
-        state = {
-          selected: items
-        };
-      }
-
-      this.setState(state);
+      this.props.reorder(source.droppableId, source.index, destination.index);
     } else {
       const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
 
-      this.setState({items: result.droppable, selected: result.droppable2});
+      this.setState({drafts: result.drafts, unreads: result.unreads, sales: result.sales});
     }
   };
-
-  handleClick() {
-    console.log("YEE MOTHERUCKER")
-  }
-
-  handleDeleteDraft (mail_id) {
-    this.props.draft.find((item) => {
-      return item.id != mail_id
-    })
-  }
 
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
@@ -121,15 +81,7 @@ class Home extends Component {
             {
               this.props.drafts.map((output, index) => {
                 let name = output.To.substring(0, output.To.indexOf("<"));
-                return (<MiniCard
-                          id={output.id}
-                          index={index}
-                          sender={name}
-                          subject={output.Subject}
-                          snippet={output.Snippet}
-                          handleDelete={this.props.handleDelete}
-                          label="drafts"
-                />)
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
@@ -143,15 +95,8 @@ class Home extends Component {
             {
               this.props.unreads.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard
-                            id={output.id}
-                            index={index}
-                            sender={name}
-                            subject={output.Subject}
-                            snippet={output.Snippet}
-                            handleDelete={this.props.handleDelete}
-                            label="unreads"
-                />)
+                console.log(output)
+                return (<MiniCard id={output.id} index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
@@ -165,15 +110,7 @@ class Home extends Component {
             {
               this.props.sales.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-                return (<MiniCard
-                          id={output.id}
-                          index={index}
-                          sender={name}
-                          subject={output.Subject}
-                          snippet={output.Snippet}
-                          handleDelete={this.props.handleDelete}
-                          label="sales"
-                        />)
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
               })
             }
             {provided.placeholder}
