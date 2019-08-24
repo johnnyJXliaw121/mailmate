@@ -12,6 +12,11 @@ import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import Box from "@material-ui/core/Box";
 import { shadows } from '@material-ui/system';
 import { withStyles } from '@material-ui/core/styles';
+import {CardHeader} from "@material-ui/core";
+import DeleteIcon from '@material-ui/icons/Delete';
+import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
+
 import Modal from 'react-responsive-modal';
 import {Value} from 'slate';
 import CKEditor from '@ckeditor/ckeditor5-react';
@@ -37,7 +42,7 @@ const initialValue = Value.fromJSON({
   }
 })
 
-const grid = 15;
+const grid = 10;
 
 const getItemStyle = (isDragging, draggableStyle) => ({
   // some basic styles to make the items look a bit nicer
@@ -72,32 +77,32 @@ class MiniCard extends Component {
 
   }
 
+    onCloseModal = () => {
+        this.setState({open: false});
+    };
+
   onOpenModal = (titleReceived,bodyReceived) => {
     this.setState({
-        open: true, 
+        open: true,
         title: titleReceived,
         body: bodyReceived
     });
   };
 
-  onCloseModal = () => {
-    this.setState({open: false});
-  };
+    onChange = ({value}) => {
+        this.setState({value})
+    }
 
-  onChange = ({value}) => {
-    this.setState({value})
+    handleChange(event) {
+        console.log(event.target.value);
+      this.setState({textValue: event.target.value});
+    }
+
+    onSendEmail = (from,to,subject,message) => {
+      sendEmail(from, to, subject, message).then((resp) => console.log("email sent"))
+      this.setState({open: false});
+
   }
-
-  handleChange(event) {
-      console.log(event.target.value);
-    this.setState({textValue: event.target.value});
-  }
-
-  onSendEmail = (from,to,subject,message) => {
-    sendEmail(from, to, subject, message).then((resp) => console.log("email sent"))
-    this.setState({open: false});
-
-}
 
   render() {
     const index = this.props.index
@@ -105,6 +110,7 @@ class MiniCard extends Component {
     const sender = this.props.sender
     const subject = this.props.subject
     const snippet = this.props.snippet
+    const letter = sender ? sender.charAt(0) : 'X'
     const body = this.props.body
     const emailNameToSend = this.props.emailName
     return (<div>
@@ -114,13 +120,21 @@ class MiniCard extends Component {
           <div  ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
           <Card style={{backgroundColor: '#white',
                           borderLeft: '5px solid #74B5FF'}}>
+                          <CardHeader
+                              avatar={
+                                  <Avatar aria-label="recipe">
+                                      {letter}
+                                  </Avatar>
+                              }
+                              action={
+                                  <IconButton aria-label="settings">
+                                      <DeleteIcon onClick={() => this.props.handleDelete(id, this.props.label)}/>
+                                  </IconButton>
+                              }
+                              title={sender}
+
+                          />
               <CardContent >
-                <Typography style={{marginTop: '-5px'}}>
-                <span style={{color: '#74b5ff',
-                                fontFamily: 'Montserrat, sans-serif',
-                                fontSize: '20px',
-                                fontWeight: '600'}}>{sender}</span>
-                </Typography>
                 <Typography >
                 <div >
                 <Box style={{
@@ -136,7 +150,7 @@ class MiniCard extends Component {
                 <Box style={{fontFamily: 'Montserrat',
                     fontSize: '12px',
                     color: 'black',
-                    
+
                     fontWeight: '50',
                     paddingTop: '8px',
                     opacity: '0.5',
@@ -161,7 +175,7 @@ class MiniCard extends Component {
           <h2>Send your Email Below</h2>
           <div style={{display:'flex'}}>
           <h3 style={{marginRight:'2%'}}> Subject </h3>
-                    
+
 
           <input style={{height:'3em',marginTop:'2px'}} value={this.state.textValue} onChange={this.handleChange}></input>
           </div>
@@ -189,5 +203,6 @@ class MiniCard extends Component {
     </div>)
   }
 }
+
 
 export default MiniCard

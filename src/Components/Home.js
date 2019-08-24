@@ -3,40 +3,26 @@ import ReactDOM from 'react-dom';
 import Card from './Card'
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import MiniCard from './MiniCard'
+import {assignLabelToMail, removeLabelFromMail} from "../api/Labels"
 
-// fake data generator
-const getItems = (count, offset = 0) => Array.from({
-  length: count
-}, (v, k) => k).map(k => ({
-  id: `item-${k + offset}`,
-  content: `item ${k + offset}`
-}));
-
-// a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
+var gapi = window.gapi
 
 /**
  * Moves an item from one list to another list.
  */
-const move = (source, destination, droppableSource, droppableDestination) => {
-  const sourceClone = Array.from(source);
-  const destClone = Array.from(destination);
-  const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-  destClone.splice(droppableDestination.index, 0, removed);
-
-  const result = {};
-  result[droppableSource.droppableId] = sourceClone;
-  result[droppableDestination.droppableId] = destClone;
-
-  return result;
-};
+// function move(source, destination, droppableSource, droppableDestination) {
+//   const sourceClone = Array.from(source);
+//   const destClone = Array.from(destination);
+//   const [removed] = sourceClone.splice(droppableSource.index, 1);
+//
+//   destClone.splice(droppableDestination.index, 0, removed);
+//
+//   const result = {};
+//   result[droppableSource.droppableId] = sourceClone;
+//   result[droppableDestination.droppableId] = destClone;
+//
+//   return result;
+// };
 
 const grid = 8;
 
@@ -52,52 +38,66 @@ const getListStyle = isDraggingOver => ({
 });
 
 class Home extends Component {
-  state = {
-    items: getItems(10),
-    selected: getItems(5, 10),
-    open: false,
-    title: '',
-    textBox: '<p>Hello World</p>'
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      open: false,
+      title: '',
+      textBox: '<p>Hello World</p>'
+    };
+    this.onDragEnd = this.onDragEnd.bind(this)
+  }
 
-  /**
-     * A semi-generic way to handle multiple lists. Matches
-     * the IDs of the droppable container to the names of the
-     * source arrays stored in the state.
-     */
-  id2List = {
-    droppable: 'items',
-    droppable2: 'selected'
-  };
-
-  getList = id => this.state[this.id2List[id]];
-
-  onDragEnd = result => {
+  onDragEnd(result) {
     const {source, destination} = result;
 
-    // dropped outside the list
+    // dropped outside the list or from drafts
     if (!destination) {
       return;
     }
 
+    // reorder inside
+    console.log('source', source);
     if (source.droppableId === destination.droppableId) {
-      const items = reorder(this.getList(source.droppableId), source.index, destination.index);
-
-      let state = {
-        items
-      };
-
-      if (source.droppableId === 'droppable2') {
-        state = {
-          selected: items
-        };
+      this.props.reorder(source.droppableId, source.index, destination.index);
+    } else {
+      // Move
+      if (source.droppableId === "drafts" || destination.droppableId === "drafts") {
+        return;
+      }
+      const listIds = {
+        unreads: "INBOX",
+        sales: "Label_6111354806179621733",
+        urgents: "Label_5377739233345144947"
       }
 
-      this.setState(state);
-    } else {
-      const result = move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
+      let emailId = this.props[source.droppableId][source.index].id
 
-      this.setState({items: result.droppable, selected: result.droppable2});
+      // let gapiInstance = gapi.auth2.getAuthInstance()
+      // gapiInstance.then(
+      // //On Init Function
+      // () => {
+      //   //Check if it is signed in now!
+      //   this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
+      //   console.log("Initial GAPI State", this.state.isSignedIn)
+      // })
+      //
+      // // Set listener for future GAPI authentication state changes
+      // gapiInstance.isSignedIn.listen((isSignedIn) => {
+      //   this.setState({isSignedIn: isSignedIn})
+      //   console.log("Signed in = ", isSignedIn)
+      //   if (isSignedIn) {
+      //
+      //     assignLabelToMail(listIds[destination.droppableId], emailId).then((response) => {
+      //       console.log('response', response);
+      //       removeLabelFromMail(listIds[source.droppableId], emailId).then((response) => {
+      //
+      //       })
+      //     })
+      //   }
+      // })
+      this.props.move(source.droppableId, destination.droppableId, source, destination);
+      // move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
     }
   };
 
@@ -161,9 +161,10 @@ class Home extends Component {
                 
                 return (
                   
-                <MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>
+                <MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="drafts"/>
                 
                 )
+
               })
             }
             {provided.placeholder}
@@ -180,8 +181,9 @@ class Home extends Component {
             </div>
             {
               this.props.unreads.map((output, index) => {
-                let name = output.From.substring(0, output.From.indexOf("<")); 
+                let name = output.From.substring(0, output.From.indexOf("<"));
                 console.log(output)
+
                 var mydate = new Date(output.Date);
                
                 var now = new Date();
@@ -190,7 +192,8 @@ class Home extends Component {
 
                 
                 var finalTime = this.timeConversation(diff)
-                return (<MiniCard id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
+                return (<MiniCard id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/> )
+
               })
             }
             {provided.placeholder}
@@ -208,6 +211,7 @@ class Home extends Component {
             {
               this.props.sales.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
+
                 var mydate = new Date(output.Date);
                
                 var now = new Date();
@@ -216,7 +220,22 @@ class Home extends Component {
 
                 
                 var finalTime = this.timeConversation(diff)
-                return (<MiniCard id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body}/>)
+
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
+              })
+            }
+            {provided.placeholder}
+          </div>)
+        }
+      </Droppable>
+      <Droppable droppableId="urgents">
+        {
+          (provided, snapshot) => (<div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
+            {
+              this.props.urgents.map((output, index) => {
+                let name = output.From.substring(0, output.From.indexOf("<"));
+                return (<MiniCard id={output.id} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
+
               })
             }
             {provided.placeholder}
