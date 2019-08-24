@@ -16,12 +16,17 @@ import {
   getUnreadMailInfo
 } from "./api/Email";
 import {
-  getDraftFromId,
+  getDraftRawFromId,
   getListOfDraftMails,
-  getSenderFromDraftResponse,
   getIdsFromDraftList,
-  createDraftMail, getBodyFromDraftResponse, getSubjectFromDraftResponse, getTextFromDraftMailById, getTextFromDraftMail
+  createDraftMail, 
+  getBodyFromDraftResponse, 
+  getHeadersFromDraftResponse,
+  getDraftFromDraftResponse,
+  getDraftById
 } from "./api/Draft";
+
+
 
 var gapi = window.gapi
 
@@ -63,22 +68,16 @@ class App extends Component {
         getListOfUnreadMails().then((unreads) => {
           this.setState({unreads: getUnreadMailInfo(unreads)})
         })
-        // getListOfDraftMails().then((response) => {
-        //   let ids = getIdsFromDraftList(response)
-        //   console.log(ids)
-        //   ids.forEach((id) => {
-        //
-        //   getDraftFromId(id).then((draft) => {
-        //     console.log(draft)
-        //     console.log(getTextFromDraftMail(draft))
-        //   })
-        //   })
-        // })
 
-        // createDraftMail(from, to, subject, message).then(()=>{
-        //   console.log("success!")
-        // })
 
+        getListOfDraftMails().then((response) => {
+          let ids = getIdsFromDraftList(response)
+          console.log(ids)
+          ids.forEach((id) => {
+            getDraftById(id).then((output)=>
+              console.log(output))
+          })
+        })
       })
 
 
