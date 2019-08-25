@@ -111,12 +111,12 @@ class Home extends Component {
   }
 
   timeConversation=(millisec) =>{
-    var seconds = (millisec / 1000).toFixed(1);
-    var minutes = (millisec / (1000 * 60)).toFixed(1);
+    var seconds = Math.round((millisec / 1000).toFixed(1));
+    var minutes = Math.round((millisec / (1000 * 60)).toFixed(1));
 
-    var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
+    var hours = Math.round((millisec / (1000 * 60 * 60)).toFixed(1));
 
-    var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
+    var days = Math.round((millisec / (1000 * 60 * 60 * 24)).toFixed(1));
 
     if (seconds < 60) {
         return seconds + " Sec";
@@ -135,7 +135,7 @@ class Home extends Component {
     return (
         <Grid container direction="row"
               justify="center"
-              style={{backgroundImage: 'url(${bg})'}}
+              style={{backgroundImage: 'url(' + image + ')', backgroundRepeat: 'no-repeat', backgroundSize: 'cover'}}
               alignItems="flex-start" className={this.props.classes.root} spacing={2}>
     <DragDropContext onDragEnd={this.onDragEnd} style={{width: '100%'}}>
         {/* Unreads */}
@@ -157,7 +157,7 @@ class Home extends Component {
                             var now = new Date();
 
                             var diff = Math.abs(now - mydate);
-
+                            console.log('difference', diff)
 
                             var finalTime = this.timeConversation(diff)
                             return (<MiniCard color="#74B5FF" id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/> )

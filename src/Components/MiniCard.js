@@ -16,6 +16,7 @@ import {CardHeader} from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
+import SendIcon from '@material-ui/icons/Send';
 
 import Modal from 'react-responsive-modal';
 import {Value} from 'slate';
@@ -85,7 +86,8 @@ class MiniCard extends Component {
     this.setState({
         open: true,
         title: titleReceived,
-        body: bodyReceived
+        body: '',
+        textBox: bodyReceived,
     });
   };
 
@@ -168,10 +170,10 @@ class MiniCard extends Component {
             overflow:'hidden',
             overflowY:'auto'
           }}>
-          <h1 style={{textAlign:'center',fontSize:'40px'}}>{this.state.title}</h1>
+          <h1 style={{textAlign:'left',fontSize:'20px', borderBottom: '1px solid #ccc2ca'}}>{this.state.title}</h1>
           <h2 >Message From {sender}</h2>
           <p>{this.state.body}</p>
-          <h2>Send your Email Below</h2>
+          {/*<h2>Send your Email Below</h2>*/}
           <div style={{display:'flex'}}>
           <h3 style={{marginRight:'2%'}}> Subject </h3>
 
@@ -191,12 +193,14 @@ class MiniCard extends Component {
             }} onFocus={editor => {
               console.log('Focus.', editor);
             }}/>
+            <IconButton href={}
           <div style={{
               textAlign: 'center',
               marginTop: '2em'
             }} onClick={()=>this.onSendEmail('MailMate <mail.mate@gmail.com',emailNameToSend,this.state.textValue,this.state.textBox)}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          </div>
+
+            {/*<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>*/}
+            </div>
         </form>
       </Modal>
     </div>)

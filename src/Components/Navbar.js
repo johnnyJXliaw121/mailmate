@@ -31,9 +31,9 @@ const useStyles = makeStyles(theme => ({
     search: {
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.white, 0.15),
+        backgroundColor: fade(theme.palette.common.black, 0.15),
         '&:hover': {
-            backgroundColor: fade(theme.palette.common.white, 0.25),
+            backgroundColor: fade('#2D21C2', 0.25),
         },
         marginLeft: 0,
         width: '100%',
@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
     },
     inputRoot: {
-        color: 'inherit',
+        color: 'primary',
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 7),
@@ -72,17 +72,17 @@ export default function SearchAppBar() {
 
     return (
         <div className={classes.root}>
-            <AppBar position="sticky">
-                <Toolbar style={{backgroundColor:'#74b5ff'}}>
+            <AppBar position="static">
+                <Toolbar style={{backgroundColor:'white', borderTop: '4px solid #74B5FF'}}>
                     <Box>
-                        <MailOutlineIcon />
+                        <MailOutlineIcon color={"primary"}/>
                     </Box>
-                    <Box  variant="h4" className={classes.title} fontWeight="900" fontFamily="Montserrat" fontSize="20px">
-                        ailMate
+                    <Box  variant="h4" color="text.primary" className={classes.title} fontWeight="900" fontFamily="Montserrat" fontSize="20px">
+                        MailMate
                     </Box>
                     <div className={classes.search}>
                         <div className={classes.searchIcon}>
-                            <SearchIcon />
+                            <SearchIcon color={"primary"} />
                         </div>
                         <InputBase
                             placeholder="Search…"
@@ -93,7 +93,7 @@ export default function SearchAppBar() {
                             inputProps={{ 'aria-label': 'search' }}
                         />
                     </div>
-                    <IconButton className = {classes.ComposeButton} color="inherit"><CreateIcon/></IconButton>
+                    <IconButton className = {classes.ComposeButton} color="primary"><CreateIcon/></IconButton>
                 </Toolbar>
             </AppBar>
         </div>
