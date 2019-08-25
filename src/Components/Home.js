@@ -89,9 +89,7 @@ class Home extends Component {
   timeConversation=(millisec) =>{
     var seconds = (millisec / 1000).toFixed(1);
     var minutes = (millisec / (1000 * 60)).toFixed(1);
-
     var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
-
     var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
 
     if (seconds < 60) {
@@ -126,16 +124,11 @@ class Home extends Component {
                     {
                         this.props.unreads.map((output, index) => {
                             let name = output.From.substring(0, output.From.indexOf("<"));
-                            console.log(output)
-
                             var mydate = new Date(output.Date);
-
                             var now = new Date();
-
                             var diff = Math.abs(now - mydate);
-
-
                             var finalTime = this.timeConversation(diff)
+
                             return (
                               <MiniCard emailName= {output.From} color="#74B5FF" id={output.id} finalTime = {finalTime }  index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="drafts"/>)
 
@@ -157,16 +150,11 @@ class Home extends Component {
             {
               this.props.urgents.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-
-
                 var mydate = new Date(output.Date);
-
                 var now = new Date();
-
                 var diff = Math.abs(now - mydate);
-
-
                 var finalTime = this.timeConversation(diff)
+
                 return (<MiniCard emailName={output.From} color="#ff6363" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="sales"/>)
               })
             }
@@ -186,14 +174,9 @@ class Home extends Component {
             {
               this.props.sales.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-
                 var mydate = new Date(output.Date);
-
                 var now = new Date();
-
                 var diff = Math.abs(now - mydate);
-
-
                 var finalTime = this.timeConversation(diff)
 
                 return (<MiniCard  emailName={output.From} color="#FFE0A2" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete}  addDraft={this.props.addDraft} label="sales"/>)
@@ -217,12 +200,8 @@ class Home extends Component {
                 let name = output.To.substring(0, output.To.indexOf("<"));
                 console.log(output.Date);
                 var mydate = new Date(output.Date);
-
                 var now = new Date();
-
                 var diff = Math.abs(now - mydate);
-
-
                 var finalTime = this.timeConversation(diff)
 
                 return (

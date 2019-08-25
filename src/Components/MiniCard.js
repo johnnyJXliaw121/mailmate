@@ -76,7 +76,6 @@ class MiniCard extends Component {
       textValue:'',
     }
     this.handleChange = this.handleChange.bind(this);
-
   }
 
     onCloseModal = () => {
@@ -87,7 +86,9 @@ class MiniCard extends Component {
         let message = this.state.textBox
         createDraftMail(from, to, subject, message).then((response) => {
           let id = response.result.id;
-          this.props.addDraft(id)
+          this.props.label !== "drafts" ?
+          this.props.addDraft(id) :
+          this.props.addDraft(id, this.props.index)
         })
     };
 

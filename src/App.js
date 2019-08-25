@@ -132,9 +132,12 @@ class App extends Component {
     this.setState({[id]: result})
   };
 
-  addDraft(id) {
+  addDraft(id, replace = undefined) {
     getDraftById(id).then((output) => {
       let currDrafts = this.state.drafts
+      if (replace !== undefined) {
+        currDrafts.splice(replace, 1)
+      }
       currDrafts.unshift(output)
       this.setState({drafts: currDrafts})
     })
