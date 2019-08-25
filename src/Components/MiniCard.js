@@ -210,7 +210,7 @@ class MiniCard extends Component {
               marginTop: '2em'
             }} onClick={()=>this.onSendEmail('MailMate <mail.mate@gmail.com',emailNameToSend,this.state.textValue,this.state.textBox)}>
 
-            {/*<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>*/}
+            {<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>}
             </div>
         </form>
       </Modal>
