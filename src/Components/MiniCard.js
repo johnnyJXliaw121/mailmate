@@ -193,7 +193,7 @@ class MiniCard extends Component {
             }} onFocus={editor => {
               console.log('Focus.', editor);
             }}/>
-            <IconButton href={}
+            {/* <IconButton href={} */}
           <div style={{
               textAlign: 'center',
               marginTop: '2em'
