@@ -82,10 +82,6 @@ class Home extends Component {
     }
   };
 
-  handleClick() {
-    console.log("YEE MOTHERUCKER")
-  }
-
   timeConversation=(millisec) =>{
     var seconds = Math.round((millisec / 1000).toFixed(1));
     var minutes = Math.round((millisec / (1000 * 60)).toFixed(1));
@@ -132,9 +128,7 @@ class Home extends Component {
                             var finalTime = this.timeConversation(diff)
 
                             return (
-                              <MiniCard emailName= {output.From} color="#74B5FF" id={output.id} finalTime = {finalTime }  index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="drafts"/>)
-
-
+                              <MiniCard emailName= {output.From} color="#74B5FF" id={output.id} finalTime = {finalTime }  index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="unreads"/>)
                         })
                     }
                     {provided.placeholder}
@@ -157,7 +151,7 @@ class Home extends Component {
                 var diff = Math.abs(now - mydate);
                 var finalTime = this.timeConversation(diff)
 
-                return (<MiniCard emailName={output.From} color="#ff6363" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="sales"/>)
+                return (<MiniCard emailName={output.From} color="#ff6363" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="urgents"/>)
               })
             }
             {provided.placeholder}
