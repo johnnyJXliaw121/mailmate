@@ -2,32 +2,15 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import Card from './Card'
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
-import MiniCard from './MiniCard'
-import {assignLabelToMail, removeLabelFromMail} from "../api/Labels"
-import Navbar from './Navbar'
+import MiniCard from './MiniCard';
+import {getListOfLabelData, getLabelNamesFromLabelData, assignLabelToMail, removeLabelFromMail} from "../api/Labels";
+import Navbar from './Navbar';
 import image from '../Background/background.jpg'
 import {withStyles} from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 
 var gapi = window.gapi
-
-/**
- * Moves an item from one list to another list.
- */
-// function move(source, destination, droppableSource, droppableDestination) {
-//   const sourceClone = Array.from(source);
-//   const destClone = Array.from(destination);
-//   const [removed] = sourceClone.splice(droppableSource.index, 1);
-//
-//   destClone.splice(droppableDestination.index, 0, removed);
-//
-//   const result = {};
-//   result[droppableSource.droppableId] = sourceClone;
-//   result[droppableDestination.droppableId] = destClone;
-//
-//   return result;
-// };
 
 const grid = 12;
 
@@ -77,32 +60,25 @@ class Home extends Component {
       }
 
       let emailId = this.props[source.droppableId][source.index].id
-
-      // let gapiInstance = gapi.auth2.getAuthInstance()
-      // gapiInstance.then(
-      // //On Init Function
-      // () => {
-      //   //Check if it is signed in now!
-      //   this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
-      //   console.log("Initial GAPI State", this.state.isSignedIn)
+      // assignLabelToMail(listIds[destination.droppableId], emailId).then((response) => {
+      //   console.log('response', response);
+      //    removeLabelFromMail(listIds[source.droppableId], emailId).then((response) => {
+      //      console.log('response', response);
+      //
+      //    })
       // })
-      //
-      // // Set listener for future GAPI authentication state changes
-      // gapiInstance.isSignedIn.listen((isSignedIn) => {
-      //   this.setState({isSignedIn: isSignedIn})
-      //   console.log("Signed in = ", isSignedIn)
-      //   if (isSignedIn) {
-      //
-      //     assignLabelToMail(listIds[destination.droppableId], emailId).then((response) => {
-      //       console.log('response', response);
-      //       removeLabelFromMail(listIds[source.droppableId], emailId).then((response) => {
-      //
-      //       })
-      //     })
-      //   }
+      // gapi.client.gmail.users.messages.modify({
+      //     'userId': 'me',
+      //     'id': destination.droppableId,
+      //     'addLabelIds': emailId
+      // }).then((response)=>{
+      //   console.log('response', response);
       // })
+      getListOfLabelData().then(labels => {
+        console.log('List of label Data', labels)
+        console.log('label names', getLabelNamesFromLabelData(labels))
+      })
       this.props.move(source.droppableId, destination.droppableId, source, destination);
-      // move(this.getList(source.droppableId), this.getList(destination.droppableId), source, destination);
     }
   };
 
@@ -150,17 +126,14 @@ class Home extends Component {
                     {
                         this.props.unreads.map((output, index) => {
                             let name = output.From.substring(0, output.From.indexOf("<"));
-                            console.log(output)
-
                             var mydate = new Date(output.Date);
-
                             var now = new Date();
-
                             var diff = Math.abs(now - mydate);
-                            console.log('difference', diff)
-
                             var finalTime = this.timeConversation(diff)
-                            return (<MiniCard color="#74B5FF" id={output.id} finalTime = {finalTime } index={index} emailName= {output.From} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="unreads"/> )
+
+                            return (
+                              <MiniCard emailName= {output.From} color="#74B5FF" id={output.id} finalTime = {finalTime }  index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="drafts"/>)
+
 
                         })
                     }
@@ -179,17 +152,12 @@ class Home extends Component {
             {
               this.props.urgents.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-
                 var mydate = new Date(output.Date);
-
                 var now = new Date();
-
                 var diff = Math.abs(now - mydate);
-
-
                 var finalTime = this.timeConversation(diff)
-                return (<MiniCard color="#ff6363" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
 
+                return (<MiniCard emailName={output.From} color="#ff6363" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="sales"/>)
               })
             }
             {provided.placeholder}
@@ -208,17 +176,12 @@ class Home extends Component {
             {
               this.props.sales.map((output, index) => {
                 let name = output.From.substring(0, output.From.indexOf("<"));
-
                 var mydate = new Date(output.Date);
-               
                 var now = new Date();
-             
                 var diff = Math.abs(now - mydate);
-
-                
                 var finalTime = this.timeConversation(diff)
 
-                return (<MiniCard color="#FFE0A2" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="sales"/>)
+                return (<MiniCard  emailName={output.From} color="#FFE0A2" id={output.id} finalTime={finalTime} index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete}  addDraft={this.props.addDraft} label="sales"/>)
               })
             }
             {provided.placeholder}
@@ -239,20 +202,13 @@ class Home extends Component {
                 let name = output.To.substring(0, output.To.indexOf("<"));
                 console.log(output.Date);
                 var mydate = new Date(output.Date);
-
                 var now = new Date();
-
                 var diff = Math.abs(now - mydate);
-
-
                 var finalTime = this.timeConversation(diff)
 
                 return (
-
-                    <MiniCard color="#958EE7" id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} label="drafts"/>
-
+                    <MiniCard  emailName={output.To} color="#958EE7" id={output.id} finalTime = {finalTime } index={index} sender={name} subject={output.Subject} snippet={output.Snippet} body={output.body} handleDelete={this.props.handleDelete} addDraft={this.props.addDraft} label="drafts"/>
                 )
-
               })
             }
             {provided.placeholder}

@@ -31,7 +31,7 @@ import {
 import Navbar from "./Components/Navbar";
 
 var gapi = window.gapi
-var bg=require('./Background/background.jpg')
+var bg = require('./Background/background.jpg')
 // a little function to help us with reordering the result
 
 /**
@@ -51,76 +51,77 @@ class App extends Component {
     this.handleDelete = this.handleDelete.bind(this)
     this.reorder = this.reorder.bind(this)
     this.move = this.move.bind(this)
+    this.addDraft = this.addDraft.bind(this)
 
-      let gapiInstance = gapi.auth2.getAuthInstance()
-      gapiInstance.then(
-      //On Init Function
-      () => {
-        //Check if it is signed in now!
-        this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
-        console.log("Initial GAPI State", this.state.isSignedIn)
-      })
+    let gapiInstance = gapi.auth2.getAuthInstance()
+    gapiInstance.then(
+    //On Init Function
+    () => {
+      //Check if it is signed in now!
+      this.setState({isSignedIn: gapiInstance.isSignedIn.get()})
+      console.log("Initial GAPI State", this.state.isSignedIn)
+    })
 
-      // Set listener for future GAPI authentication state changes
-      gapiInstance.isSignedIn.listen((isSignedIn) => {
-        this.setState({isSignedIn: isSignedIn})
-        console.log("Signed in = ", isSignedIn)
-        if (isSignedIn) {
-          // ==== GAPI API CALLS ======
-          // ==== Unread Email Calls ==
-          let unreads = []
-          getListOfUnreadMails().then((output) => {
-            let ids = getIdsFromUnreadList(output)
+    // Set listener for future GAPI authentication state changes
+    gapiInstance.isSignedIn.listen((isSignedIn) => {
+      this.setState({isSignedIn: isSignedIn})
+      console.log("Signed in = ", isSignedIn)
+      if (isSignedIn) {
+        // ==== GAPI API CALLS ======
+        // ==== Unread Email Calls ==
+        let unreads = []
+        getListOfUnreadMails().then((output) => {
+          let ids = getIdsFromUnreadList(output)
 
-            ids.forEach(id => {
-              getEmailById(id).then((output) => {
-                unreads.push(output)
-                this.setState({unreads: unreads})
-              })
+          ids.forEach(id => {
+            getEmailById(id).then((output) => {
+              unreads.push(output)
+              this.setState({unreads: unreads})
             })
           })
+        })
 
-          // ==== Draft Calls
-          let drafts = [];
-          getListOfDraftMails().then((response) => {
-            let ids = getIdsFromDraftList(response)
-            ids.forEach((id) => {
-              getDraftById(id).then((output) => {
-                drafts.push(output)
-                this.setState({drafts: drafts})
-              })
+        // ==== Draft Calls
+        let drafts = [];
+        getListOfDraftMails().then((response) => {
+          let ids = getIdsFromDraftList(response)
+          ids.forEach((id) => {
+            getDraftById(id).then((output) => {
+              drafts.push(output)
+              this.setState({drafts: drafts})
             })
           })
+        })
 
-          // ===== Label Calls ======
-          getListOfLabelData().then(labels => {
-            console.log('List of label Data', labels)
-            console.log('label names', getLabelNamesFromLabelData(labels))
-          })
+        // ===== Label Calls ======
+        // getListOfLabelData().then(labels => {
+        //   console.log('List of label Data', labels)
+        //   console.log('label names', getLabelNamesFromLabelData(labels))
+        // })
 
-          let sales = [];
-          getAllMailIdWithlabel('Label_6111354806179621733').then((response) => {
-            let ids = response
-            ids.forEach((id) => {
-              getEmailById(id).then((output) => {
-                sales.push(output)
-                this.setState({sales: sales})
-              })
+        let sales = [];
+        getAllMailIdWithlabel('Label_6111354806179621733').then((response) => {
+          let ids = response
+          ids.forEach((id) => {
+            getEmailById(id).then((output) => {
+              sales.push(output)
+              this.setState({sales: sales})
             })
           })
+        })
 
-          let urgents = [];
-          getAllMailIdWithlabel("Label_5377739233345144947").then((response) => {
-            let ids = response
-            ids.forEach((id) => {
-              getEmailById(id).then((output) => {
-                urgents.push(output)
-                this.setState({urgents: urgents})
-              })
+        let urgents = [];
+        getAllMailIdWithlabel("Label_5377739233345144947").then((response) => {
+          let ids = response
+          ids.forEach((id) => {
+            getEmailById(id).then((output) => {
+              urgents.push(output)
+              this.setState({urgents: urgents})
             })
           })
-        }
-      })
+        })
+      }
+    })
   }
 
   reorder(id, startIndex, endIndex) {
@@ -131,6 +132,17 @@ class App extends Component {
     this.setState({[id]: result})
   };
 
+  addDraft(id, replace = undefined) {
+    getDraftById(id).then((output) => {
+      let currDrafts = this.state.drafts
+      if (replace !== undefined) {
+        currDrafts.splice(replace, 1)
+      }
+      currDrafts.unshift(output)
+      this.setState({drafts: currDrafts})
+    })
+  };
+
   move(sourceId, destinationId, droppableSource, droppableDestination) {
     let source = this.state[sourceId]
     let destination = this.state[destinationId]
@@ -139,7 +151,7 @@ class App extends Component {
 
     const [removed] = sourceClone.splice(droppableSource.index, 1);
     destClone.splice(droppableDestination.index, 0, removed);
-    
+
     this.setState({[sourceId]: sourceClone});
     this.setState({[destinationId]: destClone});
   };
@@ -155,16 +167,12 @@ class App extends Component {
     let view = <div></div>
     if (this.state.isSignedIn === true) {
       // ======= INSERT HOME BELOW =========
-      view = <span style={{width: '100%'}}><Navbar/><Home
-                drafts={this.state.drafts}
-                unreads={this.state.unreads}
-                sales={this.state.sales}
-                urgents={this.state.urgents}
-                handleDelete={this.handleDelete}
-                reorder={this.reorder}
-                move={this.move}
-              /></span>
-
+      view = (<span style={{
+          width: '100%'
+        }}>
+        <Navbar/>
+        <Home drafts={this.state.drafts} unreads={this.state.unreads} sales={this.state.sales} urgents={this.state.urgents} handleDelete={this.handleDelete} reorder={this.reorder} move={this.move} addDraft={this.addDraft}/>
+      </span>)
     } else if (this.state.isSignedIn === false && this.state.isSignedIn != null) {
       view = <div>Not Signed In<SignIn2/></div>
     } else {
@@ -173,9 +181,7 @@ class App extends Component {
       </div>
     }
 
-    return (
-        view
-      );
+    return (view);
 
   }
 }
